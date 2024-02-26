@@ -1,4 +1,6 @@
 package com.example.a2048.domain.entity
 
-class Game {
-}
+data class Game(
+    val field: Array<IntArray>,
+    var score: Int = 0
+)
