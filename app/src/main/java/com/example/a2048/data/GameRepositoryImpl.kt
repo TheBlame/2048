@@ -65,7 +65,6 @@ class GameRepositoryImpl : GameRepository {
                 }
             }
         }
-
     }
 
     private fun checkZerosInField(field: Array<IntArray>): Boolean {
@@ -289,7 +288,6 @@ class GameRepositoryImpl : GameRepository {
                     }
                 }
         }
-
         return addition
     }
 }
