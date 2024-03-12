@@ -7,17 +7,24 @@ import com.example.a2048.domain.repository.GameRepository
 
 class GameRepositoryImpl : GameRepository {
 
-    private lateinit var game: Game
+    lateinit var game: Game
 
-    override fun startGame(rows: Int, columns: Int): Game {
-        game = Game(Array(rows) { IntArray(columns) })
-        repeat(2) { addNumberToField(game.field) }
+    override fun startGame(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
+        if (startingField != null) {
+            game = Game(startingField.map { it.clone() }.toTypedArray())
+        } else {
+            game = Game(Array(rows) { IntArray(columns) })
+            repeat(2) { addNumberToField(game.field) }
+        }
         return game
     }
 
-    override fun swipeFieldToDirection(direction: Direction) {
+    override fun swipeFieldToDirection(direction: Direction, testMode: Boolean) {
         moveFieldWithAddition(game, direction)
-        addNumberToField(game.field)
+
+        if (!testMode) {
+            addNumberToField(game.field)
+        }
     }
 
     private fun checkPossibleMoves(game: Game): Boolean {
@@ -216,7 +223,7 @@ class GameRepositoryImpl : GameRepository {
                     if (column < 1 || column == field[row].size - 1) {
                         continue
                     } else if ((field[row][column] != 0 && field[row][column + 1] == 0 && field[row][column - 1] == 0)
-                        || (row == field[row].size - 1 && field[row - 1][column] == 0 && field[row][column] != 0)
+                        || (column == field[row].size - 1 && field[row][column - 1] == 0 && field[row][column] != 0)
                     ) {
                         result = false
                         break@loop

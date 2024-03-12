@@ -5,7 +5,7 @@ import com.example.a2048.domain.entity.Game
 
 interface GameRepository {
 
-    fun startGame(rows: Int, columns: Int): Game
+    fun startGame(rows: Int, columns: Int, startingField: Array<IntArray>? = null): Game
 
-    fun swipeFieldToDirection(direction: Direction)
+    fun swipeFieldToDirection(direction: Direction, testMode: Boolean = false)
 }

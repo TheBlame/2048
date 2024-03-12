@@ -5,7 +5,7 @@ import com.example.a2048.domain.repository.GameRepository
 
 class StartGameUseCase(private val repository: GameRepository) {
 
-    operator fun invoke(rows: Int, columns: Int): Game {
+    operator fun invoke(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
         return repository.startGame(rows, columns)
     }
 }
