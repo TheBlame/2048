@@ -1,5 +1,6 @@
 package com.example.a2048.presentation
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,10 +9,10 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -37,6 +38,9 @@ class GameFieldView(
             updateViewSizes()
             requestLayout()
             invalidate()
+            if (cellSize != 0f) {
+                startAnimation()
+            }
         }
 
     private var swipeListener: ((Direction) -> Unit)? = null
@@ -60,10 +64,10 @@ class GameFieldView(
     private var textLength = 0f
     private var textHeight = 0
 
-    var startX = 0f
-    var startY = 0f
-    var endX = 0f
-    var endY = 0f
+    private var touchStartX = 0f
+    private var touchStartY = 0f
+    private var touchEndX = 0f
+    private var touchEndY = 0f
 
     private lateinit var gridPaint: Paint
     private lateinit var cellEmptyPaint: Paint
@@ -80,6 +84,18 @@ class GameFieldView(
     private lateinit var cell2048Paint: Paint
     private lateinit var cellBigNumberPaint: Paint
     private lateinit var cellTextPaint: Paint
+    private val textSize = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        TEXT_SIZE,
+        resources.displayMetrics
+    )
+
+    private lateinit var cellAnimator: ValueAnimator
+    private lateinit var textAnimator: ValueAnimator
+
+    private var currentCellAnimation = 0f
+    private var currentTextAnimation = 0f
+
 
     constructor(context: Context, attributesSet: AttributeSet?, defStyleAttr: Int) : this(
         context,
@@ -108,6 +124,27 @@ class GameFieldView(
             gameField = GameField(rep.startGame(4, 4).field)
             gameField!!.field[0][0] = 16
             gameField!!.field[3][1] = 128
+        }
+    }
+
+    private fun startAnimation() {
+        textAnimator = ValueAnimator.ofFloat(0f, textSize * 0.3f).apply {
+            duration = ANIMATION_DURATION
+            reverse()
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { valueAnimator ->
+                currentTextAnimation = valueAnimator.animatedValue as Float
+            }
+        }
+
+        cellAnimator = ValueAnimator.ofFloat(0f, cellSize * 0.3f).apply {
+            duration = ANIMATION_DURATION
+            reverse()
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { valueAnimator ->
+                currentCellAnimation = valueAnimator.animatedValue as Float
+                invalidate()
+            }
         }
     }
 
@@ -140,7 +177,7 @@ class GameFieldView(
             )
 
         cellEmptyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cellEmptyPaint.color = context.color(R.color.cellEmpty)
+        cellEmptyPaint.color = CELL_EMPTY_COLOR
         cellEmptyPaint.style = Paint.Style.FILL
 
         cell2Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -193,11 +230,6 @@ class GameFieldView(
 
         cellTextPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         cellTextPaint.color = Color.WHITE
-        cellTextPaint.textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            TEXT_SIZE,
-            resources.displayMetrics
-        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -231,21 +263,19 @@ class GameFieldView(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                startX = event.x
-                startY = event.y
+                touchStartX = event.x
+                touchStartY = event.y
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
-                endX = event.x
-                endY = event.y
+                touchEndX = event.x
+                touchEndY = event.y
             }
 
             MotionEvent.ACTION_UP -> {
-                val angle = getAngle(startX, startY, endX, endY)
+                val angle = getAngle(touchStartX, touchStartY, touchEndX, touchEndY)
                 swipeListener?.invoke(Direction[angle])
-                Log.d("onTouchEvent", "angle:" + getAngle(startX, startY, endX, endY).toString())
-                Log.d("onTouchEvent", "startX:$startX, endX:$endX, startY:$startY, endY:$endY")
                 return true
             }
         }
@@ -292,10 +322,10 @@ class GameFieldView(
     }
 
     private fun drawCell(canvas: Canvas, row: Int, column: Int, cellValue: Int) {
-        cellRect.left = fieldRect.left + column * cellSize + cellPadding
-        cellRect.top = fieldRect.top + row * cellSize + cellPadding
-        cellRect.right = cellRect.left + cellSize - cellPadding * 2
-        cellRect.bottom = cellRect.top + cellSize - cellPadding * 2
+        cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + currentCellAnimation
+        cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + currentCellAnimation
+        cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - currentCellAnimation * 2
+        cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - currentCellAnimation * 2
 
         cellPath.addRect(cellRect, Path.Direction.CW)
 
@@ -309,10 +339,14 @@ class GameFieldView(
         )
         textHeight = textBounds.height()
 
-        textX = cellRect.left + cellSize / 2 - textLength / 2 - cellPadding
-        textY = cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding
+        textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - currentCellAnimation
+        textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - currentCellAnimation
 
-
+        cellTextPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            TEXT_SIZE,
+            resources.displayMetrics
+        ) - currentTextAnimation
 
         when (cellValue) {
             0 -> canvas.drawPath(cellPath, cellEmptyPaint)
@@ -426,7 +460,6 @@ class GameFieldView(
             )
         }
         cellPath.reset()
-        textBounds
     }
 
     private fun updateViewSizes() {
@@ -461,7 +494,7 @@ class GameFieldView(
         val b = endY - startY
         val radian = atan2(b, a)
 
-        return  ((180f / PI.toFloat() * radian) + 360) % 360
+        return ((180f / PI.toFloat() * radian) + 360) % 360
     }
 
     @ColorInt
@@ -486,7 +519,7 @@ class GameFieldView(
         const val CELL_DEFAULT_TEXT = ""
         const val GRID_STROKE_WIDTH = 10f
         const val TEXT_SIZE = 50f
-
+        const val ANIMATION_DURATION = 75L
         const val DESIRED_CELL_SIZE = 50f
     }
 }
