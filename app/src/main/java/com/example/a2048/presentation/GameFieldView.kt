@@ -51,6 +51,7 @@ class GameFieldView(
 
     private var gridColor by Delegates.notNull<Int>()
     private var fieldBackgroundColor by Delegates.notNull<Int>()
+    private var textColor by Delegates.notNull<Int>()
 
     private val fieldRect = RectF()
     private val fieldBackgroundPath = Path()
@@ -145,7 +146,15 @@ class GameFieldView(
         )
         gridColor =
             typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.grid))
+        textColor =
+            typedArray.getColor(R.styleable.GameFieldView_textColor, context.color(R.color.white))
         typedArray.recycle()
+    }
+
+    private fun initDefaultAttr() {
+        fieldBackgroundColor = context.color(R.color.fieldBackground)
+        gridColor = context.color(R.color.grid)
+        textColor = context.color(R.color.white)
     }
 
     private fun initPaints() {
@@ -216,7 +225,7 @@ class GameFieldView(
         cellBigNumberPaint.style = Paint.Style.FILL
 
         cellTextPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cellTextPaint.color = Color.WHITE
+        cellTextPaint.color = textColor
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -474,11 +483,6 @@ class GameFieldView(
         fieldRect.top = paddingTop + (safeHeight - fieldHeight) / 2
         fieldRect.right = fieldRect.left + fieldWidth
         fieldRect.bottom = fieldRect.top + fieldHeight
-    }
-
-    private fun initDefaultAttr() {
-        fieldBackgroundColor = context.color(R.color.fieldBackground)
-        gridColor = context.color(R.color.grid)
     }
 
     private fun getAngle(startX: Float, startY: Float, endX: Float, endY: Float): Float {

@@ -12,6 +12,7 @@
     <style name="DefaultGameFieldStyle">
         <item name="gridColor">@color/grid</item>
         <item name="fieldBackGroundColor">@color/fieldBackground</item>
+        <item name="textColor">@color/white</item>
     </style>
 
     <style name="GlobalGameFieldStyle" parent="DefaultGameFieldStyle" />
