@@ -10,7 +10,8 @@
     <style name="Theme._2048" parent="Base.Theme._2048" />
 
     <style name="DefaultGameFieldStyle">
-        <item name="gridColor">#FF888888</item>
+        <item name="gridColor">@color/grid</item>
+        <item name="fieldBackGroundColor">@color/fieldBackground</item>
     </style>
 
     <style name="GlobalGameFieldStyle" parent="DefaultGameFieldStyle" />

@@ -50,10 +50,10 @@ class GameFieldView(
     }
 
     private var gridColor by Delegates.notNull<Int>()
-    private var cellColor by Delegates.notNull<Int>()
-    private lateinit var cellText: String
+    private var fieldBackgroundColor by Delegates.notNull<Int>()
 
     private val fieldRect = RectF()
+    private val fieldBackgroundPath = Path()
     private val cellRect = RectF()
     private val cellPath = Path()
     private val textBounds = Rect()
@@ -69,6 +69,7 @@ class GameFieldView(
     private var touchEndX = 0f
     private var touchEndY = 0f
 
+    private lateinit var fieldBackgroundPaint: Paint
     private lateinit var gridPaint: Paint
     private lateinit var cellEmptyPaint: Paint
     private lateinit var cell2Paint: Paint
@@ -127,27 +128,6 @@ class GameFieldView(
         }
     }
 
-    private fun startAnimation() {
-        textAnimator = ValueAnimator.ofFloat(0f, textSize * 0.3f).apply {
-            duration = ANIMATION_DURATION
-            reverse()
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener { valueAnimator ->
-                currentTextAnimation = valueAnimator.animatedValue as Float
-            }
-        }
-
-        cellAnimator = ValueAnimator.ofFloat(0f, cellSize * 0.3f).apply {
-            duration = ANIMATION_DURATION
-            reverse()
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener { valueAnimator ->
-                currentCellAnimation = valueAnimator.animatedValue as Float
-                invalidate()
-            }
-        }
-    }
-
     private fun initAttributes(
         attributesSet: AttributeSet?,
         defStyleAttr: Int,
@@ -159,13 +139,20 @@ class GameFieldView(
             defStyleAttr,
             defStyleRes
         )
-        gridColor = typedArray.getColor(R.styleable.GameFieldView_gridColor, GRID_DEFAULT_COLOR)
-        cellColor = typedArray.getColor(R.styleable.GameFieldView_cellColor, CELL_EMPTY_COLOR)
-        cellText = typedArray.getString(R.styleable.GameFieldView_cellText).toString()
+        fieldBackgroundColor = typedArray.getColor(
+            R.styleable.GameFieldView_fieldBackGroundColor,
+            context.color(R.color.fieldBackground)
+        )
+        gridColor =
+            typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.grid))
         typedArray.recycle()
     }
 
     private fun initPaints() {
+        fieldBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        fieldBackgroundPaint.color = fieldBackgroundColor
+        fieldBackgroundPaint.style = Paint.Style.FILL
+
         gridPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         gridPaint.color = gridColor
         gridPaint.style = Paint.Style.STROKE
@@ -177,7 +164,7 @@ class GameFieldView(
             )
 
         cellEmptyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cellEmptyPaint.color = CELL_EMPTY_COLOR
+        cellEmptyPaint.color = context.color(R.color.transparent)
         cellEmptyPaint.style = Paint.Style.FILL
 
         cell2Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -289,8 +276,14 @@ class GameFieldView(
         if (fieldRect.width() <= 0) return
         if (fieldRect.height() <= 0) return
 
+        drawFieldBackground(canvas)
         drawGrid(canvas)
         drawCells(canvas)
+    }
+
+    private fun drawFieldBackground(canvas: Canvas) {
+        fieldBackgroundPath.addRect(fieldRect, Path.Direction.CW)
+        canvas.drawPath(fieldBackgroundPath, fieldBackgroundPaint)
     }
 
     private fun drawGrid(canvas: Canvas) {
@@ -484,9 +477,8 @@ class GameFieldView(
     }
 
     private fun initDefaultAttr() {
-        gridColor = GRID_DEFAULT_COLOR
-        cellColor = CELL_EMPTY_COLOR
-        cellText = CELL_DEFAULT_TEXT
+        fieldBackgroundColor = context.color(R.color.fieldBackground)
+        gridColor = context.color(R.color.grid)
     }
 
     private fun getAngle(startX: Float, startY: Float, endX: Float, endY: Float): Float {
@@ -495,6 +487,27 @@ class GameFieldView(
         val radian = atan2(b, a)
 
         return ((180f / PI.toFloat() * radian) + 360) % 360
+    }
+
+    private fun startAnimation() {
+        textAnimator = ValueAnimator.ofFloat(0f, textSize * 0.3f).apply {
+            duration = ANIMATION_DURATION
+            reverse()
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { valueAnimator ->
+                currentTextAnimation = valueAnimator.animatedValue as Float
+            }
+        }
+
+        cellAnimator = ValueAnimator.ofFloat(0f, cellSize * 0.3f).apply {
+            duration = ANIMATION_DURATION
+            reverse()
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { valueAnimator ->
+                currentCellAnimation = valueAnimator.animatedValue as Float
+                invalidate()
+            }
+        }
     }
 
     @ColorInt
@@ -514,9 +527,6 @@ class GameFieldView(
     }
 
     companion object {
-        const val GRID_DEFAULT_COLOR = Color.GRAY
-        const val CELL_EMPTY_COLOR = Color.TRANSPARENT
-        const val CELL_DEFAULT_TEXT = ""
         const val GRID_STROKE_WIDTH = 10f
         const val TEXT_SIZE = 50f
         const val ANIMATION_DURATION = 75L
