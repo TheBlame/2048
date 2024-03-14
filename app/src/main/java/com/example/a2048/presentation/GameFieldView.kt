@@ -18,6 +18,8 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.example.a2048.Direction
 import com.example.a2048.R
+import com.example.a2048.Utils.Companion.color
+import com.example.a2048.Utils.Companion.deepCopy
 import com.example.a2048.data.GameRepositoryImpl
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -32,16 +34,25 @@ class GameFieldView(
     defStyleRes: Int
 ) : View(context, attributesSet, defStyleAttr, defStyleRes) {
 
-    var gameField: GameField? = null
+    var gameField: Array<IntArray>? = null
         set(value) {
-            field = value
-            updateViewSizes()
-            requestLayout()
-            invalidate()
-            if (cellSize != 0f) {
-                startAnimation()
+            if (value != null) {
+                if (!field.contentDeepEquals(value)) {
+                    field = value.deepCopy()
+                    rows = value.size
+                    columns = value.first().size
+                    updateViewSizes()
+                    requestLayout()
+                    invalidate()
+                    if (cellSize != 0f) {
+                        startAnimation()
+                    }
+                }
             }
         }
+
+    private var rows = 0
+    private var columns = 0
 
     private var swipeListener: ((Direction) -> Unit)? = null
 
@@ -97,8 +108,7 @@ class GameFieldView(
 
     private var currentCellAnimation = 0f
     private var currentTextAnimation = 0f
-
-
+    
     constructor(context: Context, attributesSet: AttributeSet?, defStyleAttr: Int) : this(
         context,
         attributesSet,
@@ -123,9 +133,9 @@ class GameFieldView(
         initPaints()
         if (isInEditMode) {
             val rep = GameRepositoryImpl()
-            gameField = GameField(rep.startGame(4, 4).field)
-            gameField!!.field[0][0] = 16
-            gameField!!.field[3][1] = 128
+            gameField = rep.startGame(4, 4).field
+            gameField!![0][0] = 16
+            gameField!![3][1] = 128
         }
     }
 
@@ -242,8 +252,6 @@ class GameFieldView(
             DESIRED_CELL_SIZE,
             resources.displayMetrics
         ).toInt()
-        val rows = gameField?.rows ?: 0
-        val columns = gameField?.columns ?: 0
 
         val desiredWidth =
             max(minWidth, columns * desiredCellSizeInPixels + paddingLeft + paddingRight)
@@ -296,18 +304,18 @@ class GameFieldView(
     }
 
     private fun drawGrid(canvas: Canvas) {
-        val field = this.gameField ?: return
+        if (gameField == null) return
 
         val xStart = fieldRect.left
         val xEnd = fieldRect.right
-        for (i in 0..field.rows) {
+        for (i in 0..rows) {
             val y = fieldRect.top + cellSize * i
             canvas.drawLine(xStart, y, xEnd, y, gridPaint)
         }
 
         val yStart = fieldRect.top
         val yEnd = fieldRect.bottom
-        for (i in 0..field.columns) {
+        for (i in 0..columns) {
             val x = fieldRect.left + cellSize * i
             canvas.drawLine(x, yStart, x, yEnd, gridPaint)
         }
@@ -316,9 +324,9 @@ class GameFieldView(
     private fun drawCells(canvas: Canvas) {
         val field = this.gameField ?: return
 
-        for (row in 0 until field.rows) {
-            for (column in 0 until field.columns) {
-                drawCell(canvas, row, column, field.getCell(row, column))
+        for (row in 0 until rows) {
+            for (column in 0 until columns) {
+                drawCell(canvas, row, column, field[row][column])
             }
         }
     }
@@ -331,6 +339,11 @@ class GameFieldView(
 
         cellPath.addRect(cellRect, Path.Direction.CW)
 
+        cellTextPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            TEXT_SIZE,
+            resources.displayMetrics
+        ) - currentTextAnimation
         textLength = cellTextPaint.measureText(cellValue.toString())
 
         cellTextPaint.getTextBounds(
@@ -343,12 +356,6 @@ class GameFieldView(
 
         textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - currentCellAnimation
         textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - currentCellAnimation
-
-        cellTextPaint.textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            TEXT_SIZE,
-            resources.displayMetrics
-        ) - currentTextAnimation
 
         when (cellValue) {
             0 -> canvas.drawPath(cellPath, cellEmptyPaint)
@@ -465,19 +472,19 @@ class GameFieldView(
     }
 
     private fun updateViewSizes() {
-        val field = this.gameField ?: return
+        if (gameField == null) return
 
         val safeWidth = width - paddingLeft - paddingRight
         val safeHeight = height - paddingTop - paddingBottom
 
-        val cellWidth = safeWidth / field.columns.toFloat()
-        val cellHeight = safeHeight / field.rows.toFloat()
+        val cellWidth = safeWidth / columns.toFloat()
+        val cellHeight = safeHeight / rows.toFloat()
 
         cellSize = min(cellWidth, cellHeight)
         cellPadding = cellSize * 0.035f
 
-        val fieldWidth = cellSize * field.columns
-        val fieldHeight = cellSize * field.rows
+        val fieldWidth = cellSize * columns
+        val fieldHeight = cellSize * rows
 
         fieldRect.left = paddingLeft + (safeWidth - fieldWidth) / 2
         fieldRect.top = paddingTop + (safeHeight - fieldHeight) / 2
@@ -513,10 +520,6 @@ class GameFieldView(
             }
         }
     }
-
-    @ColorInt
-    fun Context.color(@ColorRes colorResId: Int) =
-        ContextCompat.getColor(this, colorResId)
 
     private fun Canvas.drawPathWithText(
         path: Path,

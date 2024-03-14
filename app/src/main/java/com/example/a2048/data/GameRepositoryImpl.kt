@@ -2,6 +2,7 @@ package com.example.a2048.data
 
 import com.example.a2048.Direction
 import com.example.a2048.Direction.*
+import com.example.a2048.Utils.Companion.deepCopy
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
 
@@ -9,79 +10,91 @@ class GameRepositoryImpl : GameRepository {
 
     lateinit var game: Game
 
+    private val possibleDirections: MutableSet<Direction> = mutableSetOf()
+
     override fun startGame(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
         if (startingField != null) {
-            game = Game(startingField.map { it.clone() }.toTypedArray())
+            game = Game(startingField.deepCopy())
         } else {
             game = Game(Array(rows) { IntArray(columns) })
             repeat(2) { addNumberToField(game.field) }
+            checkPossibleMoves(game)
         }
         return game
     }
 
     override fun swipeFieldToDirection(direction: Direction, testMode: Boolean) {
-        moveFieldWithAddition(game, direction)
+        if (possibleDirections.contains(direction)) {
+            moveFieldWithAddition(game, direction)
 
-        if (!testMode) {
-            addNumberToField(game.field)
+            if (!testMode) {
+                addNumberToField(game.field)
+            }
+
+            possibleDirections.clear()
+            checkPossibleMoves(game)
+
+            if (possibleDirections.isEmpty()) game.gameOver = true
         }
     }
 
-    private fun checkPossibleMoves(game: Game): Boolean {
-        if (checkZerosInField(game.field)) {
-            return true
-        } else {
-            var haveMove: Boolean
-            var haveAddition = false
+    private fun checkPossibleMoves(game: Game) {
+        for (direction in Direction.entries) {
+            val gameFieldCopy = game.field.deepCopy()
+            val gameCopy = game.copy(field = gameFieldCopy)
 
-            for (direction in Direction.entries) {
-                val gameFieldCopy = game.field.map { it.clone() }.toTypedArray()
-                val gameCopy = game.copy(field = gameFieldCopy)
-
-                haveMove = when (direction) {
-                    BOTTOM -> moveFieldToBottom(gameFieldCopy)
-
-                    TOP -> moveFieldToTop(gameFieldCopy)
-
-                    LEFT -> moveFieldToLeft(gameFieldCopy)
-
-                    RIGHT -> moveFieldToRight(gameFieldCopy)
+            when (direction) {
+                BOTTOM -> if (moveFieldToBottom(gameFieldCopy)) {
+                    possibleDirections.add(direction)
+                    continue
                 }
 
-                if (haveMove) return true
+                TOP -> if (moveFieldToTop(gameFieldCopy)) {
+                    possibleDirections.add(direction)
+                    continue
+                }
 
-                haveAddition = addition(gameCopy, direction)
+                LEFT -> if (moveFieldToLeft(gameFieldCopy)) {
+                    possibleDirections.add(direction)
+                    continue
+                }
+
+                RIGHT -> if (moveFieldToRight(gameFieldCopy)) {
+                    possibleDirections.add(direction)
+                    continue
+                }
+
+                else -> continue
             }
-            return haveAddition
+
+            if (addition(gameCopy, direction)) {
+                possibleDirections.add(direction)
+            }
         }
     }
 
     private fun addNumberToField(field: Array<IntArray>) {
+        val emptyCells = checkZerosInField(field)
+
+        if (emptyCells.isEmpty()) return
+
         val number = if ((1..10).random() > 1) 2 else 4
+        val emptyCell = emptyCells.random()
+        field[emptyCell.row][emptyCell.column] = number
+    }
 
-        var added = false
+    private fun checkZerosInField(field: Array<IntArray>): Set<CellCoordinates> {
+        val result: MutableSet<CellCoordinates> = mutableSetOf()
 
-        if (checkZerosInField(field)) {
-            while (!added) {
-                val randomRow = (field.indices).random()
-                val randomColumn = (field[0].indices).random()
-
-                if (field[randomRow][randomColumn] == 0) {
-                    field[randomRow][randomColumn] = number
-                    added = true
+        field.forEachIndexed { rowIndex, row ->
+            row.forEachIndexed { columnIndex, column ->
+                if (column == 0) {
+                    result.add(CellCoordinates(rowIndex, columnIndex))
                 }
             }
         }
-    }
 
-    private fun checkZerosInField(field: Array<IntArray>): Boolean {
-        var result = false
-
-        field.iterator().forEachRemaining { it ->
-            it.iterator().forEachRemaining { if (it == 0) result = true }
-        }
-
-        return result
+        return result.toSet()
     }
 
     fun showField() {
@@ -104,6 +117,8 @@ class GameRepositoryImpl : GameRepository {
             LEFT -> moveFieldToLeft(game.field)
 
             RIGHT -> moveFieldToRight(game.field)
+
+            else -> return
         }
 
         val moved = checkMove(game.field, direction)
@@ -230,6 +245,8 @@ class GameRepositoryImpl : GameRepository {
                     }
                 }
             }
+
+            else -> return false
         }
 
         return result
@@ -294,7 +311,14 @@ class GameRepositoryImpl : GameRepository {
                         }
                     }
                 }
+
+            else -> return false
         }
         return addition
     }
+
+    data class CellCoordinates(
+        val row: Int,
+        val column: Int
+    )
 }

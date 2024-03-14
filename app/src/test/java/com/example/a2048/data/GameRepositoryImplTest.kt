@@ -27,9 +27,7 @@ class GameRepositoryImplTest(
 
     @Test
     fun isFieldMoved() {
-        repositoryImpl.showField()
         repositoryImpl.swipeFieldToDirection(direction, true)
-        repositoryImpl.showField()
         Assert.assertArrayEquals(expectedField, game.field)
     }
 
