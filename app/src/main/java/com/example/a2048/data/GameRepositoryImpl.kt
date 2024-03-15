@@ -1,18 +1,18 @@
 package com.example.a2048.data
 
-import com.example.a2048.Direction
-import com.example.a2048.Direction.*
-import com.example.a2048.Utils.Companion.deepCopy
+import com.example.a2048.Utils.CellCoordinates
+import com.example.a2048.Utils.Direction
+import com.example.a2048.Utils.Direction.*
+import com.example.a2048.Utils.Helpers.Companion.deepCopy
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
+import javax.inject.Inject
 
-class GameRepositoryImpl : GameRepository {
-
-    lateinit var game: Game
-
-    private val possibleDirections: MutableSet<Direction> = mutableSetOf()
+class GameRepositoryImpl @Inject constructor() : GameRepository {
 
     override fun startGame(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
+        val game: Game
+
         if (startingField != null) {
             game = Game(startingField.deepCopy())
         } else {
@@ -20,47 +20,50 @@ class GameRepositoryImpl : GameRepository {
             repeat(2) { addNumberToField(game.field) }
             checkPossibleMoves(game)
         }
+
         return game
     }
 
-    override fun swipeFieldToDirection(direction: Direction, testMode: Boolean) {
-        if (possibleDirections.contains(direction)) {
-            moveFieldWithAddition(game, direction)
+    override fun swipeFieldToDirection(game: Game, direction: Direction, testMode: Boolean): Game {
+        val result = game.clone()
+        if (result.possibleDirections.contains(direction)) {
+            moveFieldWithAddition(result, direction)
 
             if (!testMode) {
-                addNumberToField(game.field)
+                addNumberToField(result.field)
             }
 
-            possibleDirections.clear()
-            checkPossibleMoves(game)
+            result.possibleDirections.clear()
+            checkPossibleMoves(result)
 
-            if (possibleDirections.isEmpty()) game.gameOver = true
+            if (result.possibleDirections.isEmpty()) result.gameOver = true
         }
+
+        return result
     }
 
     private fun checkPossibleMoves(game: Game) {
         for (direction in Direction.entries) {
-            val gameFieldCopy = game.field.deepCopy()
-            val gameCopy = game.copy(field = gameFieldCopy)
+            val gameCopy = game.clone()
 
             when (direction) {
-                BOTTOM -> if (moveFieldToBottom(gameFieldCopy)) {
-                    possibleDirections.add(direction)
+                BOTTOM -> if (moveFieldToBottom(gameCopy.field)) {
+                    game.possibleDirections.add(direction)
                     continue
                 }
 
-                TOP -> if (moveFieldToTop(gameFieldCopy)) {
-                    possibleDirections.add(direction)
+                TOP -> if (moveFieldToTop(gameCopy.field)) {
+                    game.possibleDirections.add(direction)
                     continue
                 }
 
-                LEFT -> if (moveFieldToLeft(gameFieldCopy)) {
-                    possibleDirections.add(direction)
+                LEFT -> if (moveFieldToLeft(gameCopy.field)) {
+                    game.possibleDirections.add(direction)
                     continue
                 }
 
-                RIGHT -> if (moveFieldToRight(gameFieldCopy)) {
-                    possibleDirections.add(direction)
+                RIGHT -> if (moveFieldToRight(gameCopy.field)) {
+                    game.possibleDirections.add(direction)
                     continue
                 }
 
@@ -68,7 +71,7 @@ class GameRepositoryImpl : GameRepository {
             }
 
             if (addition(gameCopy, direction)) {
-                possibleDirections.add(direction)
+                game.possibleDirections.add(direction)
             }
         }
     }
@@ -95,17 +98,6 @@ class GameRepositoryImpl : GameRepository {
         }
 
         return result.toSet()
-    }
-
-    fun showField() {
-        for (row in game.field) {
-
-            for (column in row) {
-                print("|$column| ")
-            }
-            println()
-        }
-        println()
     }
 
     private fun moveFieldWithAddition(game: Game, direction: Direction, addition: Boolean = false) {
@@ -316,9 +308,4 @@ class GameRepositoryImpl : GameRepository {
         }
         return addition
     }
-
-    data class CellCoordinates(
-        val row: Int,
-        val column: Int
-    )
 }

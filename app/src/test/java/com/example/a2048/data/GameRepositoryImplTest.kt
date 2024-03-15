@@ -1,8 +1,7 @@
 package com.example.a2048.data
 
-import com.example.a2048.Direction
+import com.example.a2048.Utils.Direction
 import com.example.a2048.domain.entity.Game
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -27,13 +26,13 @@ class GameRepositoryImplTest(
 
     @Test
     fun isFieldMoved() {
-        repositoryImpl.swipeFieldToDirection(direction, true)
+        repositoryImpl.swipeFieldToDirection(game, direction, true)
         Assert.assertArrayEquals(expectedField, game.field)
     }
 
     @Test
     fun isScoreCalculate() {
-        repositoryImpl.swipeFieldToDirection(direction, true)
+        repositoryImpl.swipeFieldToDirection(game, direction, true)
         Assert.assertEquals(expectedScore, game.score)
     }
 

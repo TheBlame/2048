@@ -1,4 +1,4 @@
-package com.example.a2048.presentation
+package com.example.a2048.presentation.views
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -13,15 +13,11 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
-import com.example.a2048.CellCoordinates
-import com.example.a2048.Direction
+import com.example.a2048.Utils.CellCoordinates
+import com.example.a2048.Utils.Direction
 import com.example.a2048.R
-import com.example.a2048.Utils
-import com.example.a2048.Utils.Companion.color
-import com.example.a2048.Utils.Companion.deepCopy
+import com.example.a2048.Utils.Helpers.Companion.color
+import com.example.a2048.Utils.Helpers.Companion.deepCopy
 import com.example.a2048.data.GameRepositoryImpl
 import kotlin.math.PI
 import kotlin.math.atan2

@@ -11,14 +11,5 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val gr = GameRepositoryImpl()
-        val game = gr.startGame(4, 4)
-
-        binding.gameField.gameField = game.field
-        binding.gameField.setSwipeListener {
-            gr.swipeFieldToDirection(it)
-            binding.gameField.gameField = game.field
-        }
     }
 }

@@ -1,12 +1,13 @@
 package com.example.a2048.domain.usecases
 
-import com.example.a2048.Direction
+import com.example.a2048.Utils.Direction
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
+import javax.inject.Inject
 
-class SwipeFieldToDirectionUseCase(private val repository: GameRepository) {
+class SwipeFieldToDirectionUseCase @Inject constructor(private val repository: GameRepository) {
 
-    operator fun invoke(direction: Direction) {
-       repository.swipeFieldToDirection(direction)
+    operator fun invoke(game: Game, direction: Direction): Game {
+       return repository.swipeFieldToDirection(game, direction)
     }
 }

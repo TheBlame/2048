@@ -1,11 +1,13 @@
 package com.example.a2048.domain.usecases
 
 import com.example.a2048.domain.entity.Game
+import com.example.a2048.domain.entity.GameSetting
 import com.example.a2048.domain.repository.GameRepository
+import javax.inject.Inject
 
-class StartGameUseCase(private val repository: GameRepository) {
+class StartGameUseCase @Inject constructor(private val repository: GameRepository) {
 
-    operator fun invoke(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
-        return repository.startGame(rows, columns)
+    operator fun invoke(gameSetting: GameSetting, startingField: Array<IntArray>? = null): Game {
+        return repository.startGame(gameSetting.rows, gameSetting.columns)
     }
 }

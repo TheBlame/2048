@@ -1,4 +1,4 @@
-package com.example.a2048
+package com.example.a2048.Utils
 
 data class CellCoordinates(
     val row: Int,
