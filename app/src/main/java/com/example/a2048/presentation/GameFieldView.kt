@@ -16,8 +16,10 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import com.example.a2048.CellCoordinates
 import com.example.a2048.Direction
 import com.example.a2048.R
+import com.example.a2048.Utils
 import com.example.a2048.Utils.Companion.color
 import com.example.a2048.Utils.Companion.deepCopy
 import com.example.a2048.data.GameRepositoryImpl
@@ -38,6 +40,7 @@ class GameFieldView(
         set(value) {
             if (value != null) {
                 if (!field.contentDeepEquals(value)) {
+                    checkChangedCells(field, value)
                     field = value.deepCopy()
                     rows = value.size
                     columns = value.first().size
@@ -53,6 +56,8 @@ class GameFieldView(
 
     private var rows = 0
     private var columns = 0
+
+    private val changedCells = mutableSetOf<CellCoordinates>()
 
     private var swipeListener: ((Direction) -> Unit)? = null
 
@@ -83,7 +88,6 @@ class GameFieldView(
 
     private lateinit var fieldBackgroundPaint: Paint
     private lateinit var gridPaint: Paint
-    private lateinit var cellEmptyPaint: Paint
     private lateinit var cell2Paint: Paint
     private lateinit var cell4Paint: Paint
     private lateinit var cell8Paint: Paint
@@ -108,7 +112,7 @@ class GameFieldView(
 
     private var currentCellAnimation = 0f
     private var currentTextAnimation = 0f
-    
+
     constructor(context: Context, attributesSet: AttributeSet?, defStyleAttr: Int) : this(
         context,
         attributesSet,
@@ -181,10 +185,6 @@ class GameFieldView(
                 GRID_STROKE_WIDTH,
                 resources.displayMetrics
             )
-
-        cellEmptyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cellEmptyPaint.color = context.color(R.color.transparent)
-        cellEmptyPaint.style = Paint.Style.FILL
 
         cell2Paint = Paint(Paint.ANTI_ALIAS_FLAG)
         cell2Paint.color = context.color(R.color.cellValue2)
@@ -332,18 +332,26 @@ class GameFieldView(
     }
 
     private fun drawCell(canvas: Canvas, row: Int, column: Int, cellValue: Int) {
-        cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + currentCellAnimation
-        cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + currentCellAnimation
-        cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - currentCellAnimation * 2
-        cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - currentCellAnimation * 2
+        if (cellValue == 0) return
+
+        val cellAnimation =
+            if (changedCells.contains(CellCoordinates(row, column))) currentCellAnimation else 0f
+
+        val textAnimation =
+            if (changedCells.contains(CellCoordinates(row, column))) currentTextAnimation else 0f
+
+        cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + cellAnimation
+        cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + cellAnimation
+        cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - cellAnimation * 2
+        cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - cellAnimation * 2
 
         cellPath.addRect(cellRect, Path.Direction.CW)
 
         cellTextPaint.textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            TEXT_SIZE,
+            TEXT_SIZE - textAnimation,
             resources.displayMetrics
-        ) - currentTextAnimation
+        )
         textLength = cellTextPaint.measureText(cellValue.toString())
 
         cellTextPaint.getTextBounds(
@@ -354,12 +362,10 @@ class GameFieldView(
         )
         textHeight = textBounds.height()
 
-        textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - currentCellAnimation
-        textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - currentCellAnimation
+        textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - cellAnimation
+        textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - cellAnimation
 
         when (cellValue) {
-            0 -> canvas.drawPath(cellPath, cellEmptyPaint)
-
             2 -> canvas.drawPathWithText(
                 cellPath,
                 cell2Paint,
@@ -521,6 +527,20 @@ class GameFieldView(
         }
     }
 
+    private fun checkChangedCells(oldArray: Array<IntArray>?, newArray: Array<IntArray>) {
+        if (oldArray == null) return
+
+        changedCells.clear()
+
+        for (row in oldArray.indices) {
+            for (column in oldArray[row].indices) {
+                if (oldArray[row][column] != newArray[row][column]) {
+                    changedCells.add(CellCoordinates(row, column))
+                }
+            }
+        }
+    }
+
     private fun Canvas.drawPathWithText(
         path: Path,
         pathPaint: Paint,
@@ -536,7 +556,7 @@ class GameFieldView(
     companion object {
         const val GRID_STROKE_WIDTH = 10f
         const val TEXT_SIZE = 50f
-        const val ANIMATION_DURATION = 75L
+        const val ANIMATION_DURATION = 100L
         const val DESIRED_CELL_SIZE = 50f
     }
 }

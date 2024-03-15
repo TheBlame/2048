@@ -12,5 +12,10 @@ class Utils {
         @ColorInt
         fun Context.color(@ColorRes colorResId: Int) =
             ContextCompat.getColor(this, colorResId)
+
+        data class CellCoordinates(
+            val row: Int,
+            val column: Int
+        )
     }
 }
