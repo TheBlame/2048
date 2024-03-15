@@ -341,7 +341,7 @@ class GameFieldView(
         cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - cellAnimation * 2
         cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - cellAnimation * 2
 
-        cellPath.addRect(cellRect, Path.Direction.CW)
+        cellPath.addRoundRect(cellRect,cellPadding * 2, cellPadding * 2, Path.Direction.CW)
 
         cellTextPaint.textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -483,7 +483,7 @@ class GameFieldView(
         val cellHeight = safeHeight / rows.toFloat()
 
         cellSize = min(cellWidth, cellHeight)
-        cellPadding = cellSize * 0.035f
+        cellPadding = cellSize * 0.03f
 
         val fieldWidth = cellSize * columns
         val fieldHeight = cellSize * rows
