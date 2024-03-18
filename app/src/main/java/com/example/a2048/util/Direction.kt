@@ -1,4 +1,4 @@
-package com.example.a2048.Utils
+package com.example.a2048.util
 
 enum class Direction {
     TOP, BOTTOM, LEFT, RIGHT, NONE;

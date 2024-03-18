@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.a2048.App2048
-import com.example.a2048.Utils.Helpers.Companion.lazyViewModel
+import com.example.a2048.util.Helpers.Companion.lazyViewModel
 import com.example.a2048.databinding.FragmentGameBinding
 
 import com.example.a2048.domain.entity.GameSetting
@@ -64,7 +64,7 @@ class GameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state.collectLatest { binding.gameField.gameField = it.field }
+                viewModel.state.collectLatest { binding.gameField.game = it }
             }
         }
         binding.gameField.setSwipeListener {

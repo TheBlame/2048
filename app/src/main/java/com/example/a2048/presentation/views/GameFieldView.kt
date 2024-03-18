@@ -13,12 +13,12 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.example.a2048.Utils.CellCoordinates
-import com.example.a2048.Utils.Direction
 import com.example.a2048.R
-import com.example.a2048.Utils.Helpers.Companion.color
-import com.example.a2048.Utils.Helpers.Companion.deepCopy
 import com.example.a2048.data.GameRepositoryImpl
+import com.example.a2048.domain.entity.Game
+import com.example.a2048.util.CellCoordinates
+import com.example.a2048.util.Direction
+import com.example.a2048.util.Helpers.Companion.color
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.max
@@ -32,20 +32,20 @@ class GameFieldView(
     defStyleRes: Int
 ) : View(context, attributesSet, defStyleAttr, defStyleRes) {
 
-    var gameField: Array<IntArray>? = null
+    var game: Game? = null
         set(value) {
             if (value != null) {
-                if (!field.contentDeepEquals(value)) {
-                    checkChangedCells(field, value)
-                    field = value.deepCopy()
-                    rows = value.size
-                    columns = value.first().size
-                    updateViewSizes()
-                    requestLayout()
-                    invalidate()
-                    if (cellSize != 0f) {
-                        startAnimation()
-                    }
+                changedCells.clear()
+                value.lastAddedCell?.let { changedCells.add(it) }
+                checkChangedCells(game?.field, value.field)
+                field = value
+                rows = value.field.size
+                columns = value.field.first().size
+                updateViewSizes()
+                requestLayout()
+                invalidate()
+                if (cellSize != 0f) {
+                    startAnimation()
                 }
             }
         }
@@ -132,10 +132,17 @@ class GameFieldView(
         }
         initPaints()
         if (isInEditMode) {
+            val list = buildList {
+                repeat(rows) {
+                    add(buildList { repeat(columns) { add(0) } }.toMutableList())
+                }
+            }.toMutableList()
+            list[0][0] = 2
+            list[0][1] = 16
+            list[0][2] = 32
+            list[0][3] = 128
             val rep = GameRepositoryImpl()
-            gameField = rep.startGame(4, 4).field
-            gameField!![0][0] = 16
-            gameField!![3][1] = 128
+            game = rep.startGame(4, 4, list)
         }
     }
 
@@ -284,7 +291,7 @@ class GameFieldView(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (gameField == null) return
+        if (game == null) return
         if (cellSize == 0f) return
         if (fieldRect.width() <= 0) return
         if (fieldRect.height() <= 0) return
@@ -300,7 +307,7 @@ class GameFieldView(
     }
 
     private fun drawGrid(canvas: Canvas) {
-        if (gameField == null) return
+        if (game == null) return
 
         val xStart = fieldRect.left
         val xEnd = fieldRect.right
@@ -318,7 +325,7 @@ class GameFieldView(
     }
 
     private fun drawCells(canvas: Canvas) {
-        val field = this.gameField ?: return
+        val field = this.game?.field ?: return
 
         for (row in 0 until rows) {
             for (column in 0 until columns) {
@@ -341,7 +348,7 @@ class GameFieldView(
         cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - cellAnimation * 2
         cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - cellAnimation * 2
 
-        cellPath.addRoundRect(cellRect,cellPadding * 2, cellPadding * 2, Path.Direction.CW)
+        cellPath.addRoundRect(cellRect, cellPadding * 2, cellPadding * 2, Path.Direction.CW)
 
         cellTextPaint.textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -474,7 +481,7 @@ class GameFieldView(
     }
 
     private fun updateViewSizes() {
-        if (gameField == null) return
+        if (game == null) return
 
         val safeWidth = width - paddingLeft - paddingRight
         val safeHeight = height - paddingTop - paddingBottom
@@ -523,14 +530,12 @@ class GameFieldView(
         }
     }
 
-    private fun checkChangedCells(oldArray: Array<IntArray>?, newArray: Array<IntArray>) {
-        if (oldArray == null) return
+    private fun checkChangedCells(oldList: List<List<Int>>?, newList: List<List<Int>>) {
+        if (oldList == null) return
 
-        changedCells.clear()
-
-        for (row in oldArray.indices) {
-            for (column in oldArray[row].indices) {
-                if (oldArray[row][column] != newArray[row][column]) {
+        for (row in oldList.indices) {
+            for (column in oldList[row].indices) {
+                if (oldList[row][column] != newList[row][column]) {
                     changedCells.add(CellCoordinates(row, column))
                 }
             }
@@ -552,7 +557,7 @@ class GameFieldView(
     companion object {
         const val GRID_STROKE_WIDTH = 10f
         const val TEXT_SIZE = 50f
-        const val ANIMATION_DURATION = 100L
+        const val ANIMATION_DURATION = 125L
         const val DESIRED_CELL_SIZE = 50f
     }
 }

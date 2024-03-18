@@ -1,6 +1,6 @@
 package com.example.a2048.domain.usecases
 
-import com.example.a2048.Utils.Direction
+import com.example.a2048.util.Direction
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
 import javax.inject.Inject

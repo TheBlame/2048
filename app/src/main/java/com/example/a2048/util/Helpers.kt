@@ -1,4 +1,4 @@
-package com.example.a2048.Utils
+package com.example.a2048.util
 
 import android.content.Context
 import androidx.annotation.ColorInt
@@ -23,5 +23,11 @@ class Helpers {
         ) = viewModels<T> {
             Factory(this, create)
         }
+
+        fun <T> MutableList<MutableList<T>>.twoDimensionalMutableListToList() =
+            map { it.toList() }.toList()
+
+        fun <T> List<List<T>>.twoDimensionalListToMutableList() =
+            map { it.toMutableList() }.toMutableList()
     }
 }

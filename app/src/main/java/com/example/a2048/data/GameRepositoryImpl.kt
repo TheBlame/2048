@@ -1,92 +1,104 @@
 package com.example.a2048.data
 
-import com.example.a2048.Utils.CellCoordinates
-import com.example.a2048.Utils.Direction
-import com.example.a2048.Utils.Direction.*
-import com.example.a2048.Utils.Helpers.Companion.deepCopy
+import com.example.a2048.util.CellCoordinates
+import com.example.a2048.util.Direction
+import com.example.a2048.util.Direction.*
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
+import com.example.a2048.util.Helpers.Companion.twoDimensionalListToMutableList
 import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor() : GameRepository {
 
-    override fun startGame(rows: Int, columns: Int, startingField: Array<IntArray>?): Game {
-        val game: Game
+    override fun startGame(rows: Int, columns: Int, startingField: List<List<Int>>?): Game {
+        var game: Game
 
         if (startingField != null) {
-            game = Game(startingField.deepCopy())
+            game = Game(startingField)
         } else {
-            game = Game(Array(rows) { IntArray(columns) })
-            repeat(2) { addNumberToField(game.field) }
-            checkPossibleMoves(game)
+            val list = buildList {
+                repeat(rows) {
+                    add(buildList { repeat(columns) { add(0) } })
+                }
+            }
+
+            game = Game(list)
+            repeat(2) { game = addNumberToField(game) }
+
         }
 
-        return game
+        val possibleMoves = checkPossibleMoves(game)
+
+        return game.copy(possibleDirections = possibleMoves)
     }
 
     override fun swipeFieldToDirection(game: Game, direction: Direction, testMode: Boolean): Game {
-        val result = game.clone()
-        if (result.possibleDirections.contains(direction)) {
-            moveFieldWithAddition(result, direction)
+        if (!game.possibleDirections.contains(direction)) return game
 
-            if (!testMode) {
-                addNumberToField(result.field)
-            }
+        var newGameState = moveFieldWithAddition(game, direction)
 
-            result.possibleDirections.clear()
-            checkPossibleMoves(result)
-
-            if (result.possibleDirections.isEmpty()) result.gameOver = true
+        if (!testMode) {
+            newGameState = addNumberToField(newGameState)
         }
 
-        return result
+        val possibleMoves = checkPossibleMoves(newGameState)
+
+        if (possibleMoves.isEmpty()) return game.copy(
+            possibleDirections = possibleMoves,
+            gameOver = true
+        )
+
+        return newGameState.copy(
+            possibleDirections = possibleMoves
+        )
     }
 
-    private fun checkPossibleMoves(game: Game) {
+    private fun checkPossibleMoves(game: Game): Set<Direction> {
+        val set = mutableSetOf<Direction>()
         for (direction in Direction.entries) {
-            val gameCopy = game.clone()
 
             when (direction) {
-                BOTTOM -> if (moveFieldToBottom(gameCopy.field)) {
-                    game.possibleDirections.add(direction)
-                    continue
+                BOTTOM -> if (checkMoveToBottom(game.field)) {
+                    set.add(direction)
                 }
 
-                TOP -> if (moveFieldToTop(gameCopy.field)) {
-                    game.possibleDirections.add(direction)
-                    continue
+                TOP -> if (checkMoveToTop(game.field)) {
+                    set.add(direction)
                 }
 
-                LEFT -> if (moveFieldToLeft(gameCopy.field)) {
-                    game.possibleDirections.add(direction)
-                    continue
+                LEFT -> if (checkMoveToLeft(game.field)) {
+                    set.add(direction)
                 }
 
-                RIGHT -> if (moveFieldToRight(gameCopy.field)) {
-                    game.possibleDirections.add(direction)
-                    continue
+                RIGHT -> if (checkMoveToRight(game.field)) {
+                    set.add(direction)
                 }
 
                 else -> continue
             }
 
-            if (addition(gameCopy, direction)) {
-                game.possibleDirections.add(direction)
+            if (checkAddition(game, direction)) {
+                set.add(direction)
             }
         }
+
+        return set.toSet()
     }
 
-    private fun addNumberToField(field: Array<IntArray>) {
-        val emptyCells = checkZerosInField(field)
+    private fun addNumberToField(game: Game): Game {
+        val emptyCells = checkZerosInField(game.field)
 
-        if (emptyCells.isEmpty()) return
+        if (emptyCells.isEmpty()) return game
+
+        val field = game.field.twoDimensionalListToMutableList()
 
         val number = if ((1..10).random() > 1) 2 else 4
         val emptyCell = emptyCells.random()
         field[emptyCell.row][emptyCell.column] = number
+        return game.copy(field = field, lastAddedCell = emptyCell)
     }
 
-    private fun checkZerosInField(field: Array<IntArray>): Set<CellCoordinates> {
+    private fun checkZerosInField(field: List<List<Int>>): Set<CellCoordinates> {
         val result: MutableSet<CellCoordinates> = mutableSetOf()
 
         field.forEachIndexed { rowIndex, row ->
@@ -100,31 +112,37 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         return result.toSet()
     }
 
-    private fun moveFieldWithAddition(game: Game, direction: Direction, addition: Boolean = false) {
-        when (direction) {
-            BOTTOM -> moveFieldToBottom(game.field)
+    private fun moveFieldWithAddition(
+        game: Game,
+        direction: Direction,
+        addition: Boolean = false
+    ): Game {
+        val newGameState = when (direction) {
+            BOTTOM -> moveFieldToBottom(game)
 
-            TOP -> moveFieldToTop(game.field)
+            TOP -> moveFieldToTop(game)
 
-            LEFT -> moveFieldToLeft(game.field)
+            LEFT -> moveFieldToLeft(game)
 
-            RIGHT -> moveFieldToRight(game.field)
+            RIGHT -> moveFieldToRight(game)
 
-            else -> return
+            else -> return game
         }
 
-        val moved = checkMove(game.field, direction)
+        val moved = checkMove(newGameState.field, direction)
 
         if (moved && !addition) {
-            addition(game, direction)
-            moveFieldWithAddition(game, direction, true)
+            val gameAfterAddition = addition(newGameState, direction)
+            return moveFieldWithAddition(gameAfterAddition, direction, true)
         } else if (!moved) {
-            moveFieldWithAddition(game, direction)
+            return moveFieldWithAddition(newGameState, direction)
         }
+
+        return newGameState
     }
 
-    private fun moveFieldToLeft(field: Array<IntArray>): Boolean {
-        var haveMove = false
+    private fun moveFieldToLeft(game: Game): Game {
+        val field = game.field.twoDimensionalListToMutableList()
 
         for (row in field.indices) {
             for (column in field[row].indices) {
@@ -133,30 +151,56 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                 } else if (field[row][column] == 0 && field[row][column + 1] != 0) {
                     field[row][column] = field[row][column + 1]
                     field[row][column + 1] = 0
-                    haveMove = true
                 }
             }
         }
-        return haveMove
+
+        return game.copy(field = field)
     }
 
-    private fun moveFieldToRight(field: Array<IntArray>): Boolean {
-        var haveMove = false
+    private fun checkMoveToLeft(field: List<List<Int>>): Boolean {
+        for (row in field.indices) {
+            for (column in field[row].indices) {
+                if (column == field[row].size - 1) {
+                    continue
+                } else if (field[row][column] == 0 && field[row][column + 1] != 0) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun moveFieldToRight(game: Game): Game {
+        val field = game.field.twoDimensionalListToMutableList()
 
         for (row in field.indices) {
             for (column in field[row].size - 1 downTo 1) {
                 if (field[row][column] == 0 && field[row][column - 1] != 0) {
                     field[row][column] = field[row][column - 1]
                     field[row][column - 1] = 0
-                    haveMove = true
                 }
             }
         }
-        return haveMove
+
+        return game.copy(field = field)
     }
 
-    private fun moveFieldToTop(field: Array<IntArray>): Boolean {
-        var haveMove = false
+    private fun checkMoveToRight(field: List<List<Int>>): Boolean {
+        for (row in field.indices) {
+            for (column in field[row].size - 1 downTo 1) {
+                if (field[row][column] == 0 && field[row][column - 1] != 0) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun moveFieldToTop(game: Game): Game {
+        val field = game.field.twoDimensionalListToMutableList()
 
         for (row in field.indices) {
             for (column in field[row].indices) {
@@ -165,36 +209,63 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                 } else if (field[row][column] == 0 && field[row + 1][column] != 0) {
                     field[row][column] = field[row + 1][column]
                     field[row + 1][column] = 0
-                    haveMove = true
                 }
             }
         }
-        return haveMove
+
+        return game.copy(field = field)
     }
 
-    private fun moveFieldToBottom(field: Array<IntArray>): Boolean {
-        var haveMove = false
+    private fun checkMoveToTop(field: List<List<Int>>): Boolean {
+        for (row in field.indices) {
+            for (column in field[row].indices) {
+                if (row == field.size - 1) {
+                    continue
+                } else if (field[row][column] == 0 && field[row + 1][column] != 0) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun moveFieldToBottom(game: Game): Game {
+        val field = game.field.twoDimensionalListToMutableList()
 
         for (row in field.size - 1 downTo 1) {
             for (column in field[row].indices) {
                 if (field[row][column] == 0 && field[row - 1][column] != 0) {
                     field[row][column] = field[row - 1][column]
                     field[row - 1][column] = 0
-                    haveMove = true
                 }
             }
         }
-        return haveMove
+
+        return game.copy(field = field)
     }
 
-    private fun checkMove(field: Array<IntArray>, direction: Direction): Boolean {
+    private fun checkMoveToBottom(field: List<List<Int>>): Boolean {
+        for (row in field.size - 1 downTo 1) {
+            for (column in field[row].indices) {
+                if (field[row][column] == 0 && field[row - 1][column] != 0) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun checkMove(field: List<List<Int>>, direction: Direction): Boolean {
         var result = true
 
         when (direction) {
             BOTTOM -> loop@ for (row in field.indices) {
                 if (row < 1 || row == field.size - 1) continue
                 for (column in field[row].indices) {
-                    if ((field[row][column] != 0 && field[row + 1][column] == 0 && field[row - 1][column] == 0)
+                    if ((field[row][column] == 0 && field[row - 1][column] != 0)
+                        || (field[row][column] != 0 && field[row + 1][column] == 0 && field[row - 1][column] == 0)
                         || (row == field.size - 1 && field[row - 1][column] == 0 && field[row][column] != 0)
                     ) {
                         result = false
@@ -205,7 +276,8 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             TOP -> loop@ for (row in field.size - 2 downTo 1) {
                 for (column in field[row].indices) {
-                    if ((field[row][column] != 0 && field[row + 1][column] == 0 && field[row - 1][column] == 0)
+                    if ((field[row][column] == 0 && field[row + 1][column] != 0)
+                        || (field[row][column] != 0 && field[row + 1][column] == 0 && field[row - 1][column] == 0)
                         || (row == 1 && field[0][column] == 0 && field[row][column] != 0)
                     ) {
                         result = false
@@ -216,7 +288,8 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             LEFT -> loop@ for (row in field.indices) {
                 for (column in field[row].size - 2 downTo 1) {
-                    if ((field[row][column] != 0 && field[row][column + 1] == 0 && field[row][column - 1] == 0)
+                    if ((field[row][column] == 0 && field[row][column + 1] != 0)
+                        || (field[row][column] != 0 && field[row][column + 1] == 0 && field[row][column - 1] == 0)
                         || (column == 1 && field[row][0] == 0 && field[row][column] != 0)
                     ) {
                         result = false
@@ -229,7 +302,8 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                 for (column in field[row].indices) {
                     if (column < 1 || column == field[row].size - 1) {
                         continue
-                    } else if ((field[row][column] != 0 && field[row][column + 1] == 0 && field[row][column - 1] == 0)
+                    } else if ((field[row][column] == 0 && field[row][column - 1] != 0)
+                        || (field[row][column] != 0 && field[row][column + 1] == 0 && field[row][column - 1] == 0)
                         || (column == field[row].size - 1 && field[row][column - 1] == 0 && field[row][column] != 0)
                     ) {
                         result = false
@@ -244,9 +318,70 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         return result
     }
 
-    private fun addition(game: Game, direction: Direction): Boolean {
-        var addition = false
+    private fun addition(game: Game, direction: Direction): Game {
+        val field = game.field.twoDimensionalListToMutableList()
+        var score = game.score
 
+        when (direction) {
+            BOTTOM ->
+                for (row in field.size - 1 downTo 1) {
+                    for (column in field[row].indices) {
+                        if (field[row][column] == 0) {
+                            continue
+                        } else if (field[row - 1][column] == field[row][column]) {
+                            score += field[row][column] * 2
+                            field[row][column] = field[row][column] * 2
+                            field[row - 1][column] = 0
+                        }
+                    }
+                }
+
+            TOP ->
+                for (row in field.indices) {
+                    for (column in field[row].indices) {
+                        if (row == field.size - 1 || field[row][column] == 0) {
+                            continue
+                        } else if (field[row + 1][column] == field[row][column]) {
+                            score += field[row][column] * 2
+                            field[row][column] = field[row][column] * 2
+                            field[row + 1][column] = 0
+                        }
+                    }
+                }
+
+            LEFT ->
+                for (row in field.indices) {
+                    for (column in field.indices) {
+                        if (column == field[row].size - 1 || field[row][column] == 0) {
+                            continue
+                        } else if (field[row][column + 1] == field[row][column]) {
+                            score += field[row][column] * 2
+                            field[row][column] = field[row][column] * 2
+                            field[row][column + 1] = 0
+                        }
+                    }
+                }
+
+            RIGHT ->
+                for (row in field.indices) {
+                    for (column in field.size - 1 downTo 1) {
+                        if (field[row][column] == 0) {
+                            continue
+                        } else if (field[row][column - 1] == field[row][column]) {
+                            score += field[row][column] * 2
+                            field[row][column] = field[row][column] * 2
+                            field[row][column - 1] = 0
+                        }
+                    }
+                }
+
+            else -> return game
+        }
+
+        return game.copy(field = field, score = score)
+    }
+
+    private fun checkAddition(game: Game, direction: Direction): Boolean {
         when (direction) {
             BOTTOM ->
                 for (row in game.field.size - 1 downTo 1) {
@@ -254,10 +389,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         if (game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row - 1][column] == game.field[row][column]) {
-                            game.score += game.field[row][column] * 2
-                            game.field[row][column] = game.field[row][column] * 2
-                            game.field[row - 1][column] = 0
-                            addition = true
+                            return true
                         }
                     }
                 }
@@ -268,10 +400,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         if (row == game.field.size - 1 || game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row + 1][column] == game.field[row][column]) {
-                            game.score += game.field[row][column] * 2
-                            game.field[row][column] = game.field[row][column] * 2
-                            game.field[row + 1][column] = 0
-                            addition = true
+                            return true
                         }
                     }
                 }
@@ -282,10 +411,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         if (column == game.field[row].size - 1 || game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row][column + 1] == game.field[row][column]) {
-                            game.score += game.field[row][column] * 2
-                            game.field[row][column] = game.field[row][column] * 2
-                            game.field[row][column + 1] = 0
-                            addition = true
+                            return true
                         }
                     }
                 }
@@ -296,16 +422,14 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
                         if (game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row][column - 1] == game.field[row][column]) {
-                            game.score += game.field[row][column] * 2
-                            game.field[row][column] = game.field[row][column] * 2
-                            game.field[row][column - 1] = 0
-                            addition = true
+                            return true
                         }
                     }
                 }
 
             else -> return false
         }
-        return addition
+
+        return false
     }
 }
