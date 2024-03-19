@@ -60,18 +60,22 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
             when (direction) {
                 BOTTOM -> if (checkMoveToBottom(game.field)) {
                     set.add(direction)
+                    continue
                 }
 
                 TOP -> if (checkMoveToTop(game.field)) {
                     set.add(direction)
+                    continue
                 }
 
                 LEFT -> if (checkMoveToLeft(game.field)) {
                     set.add(direction)
+                    continue
                 }
 
                 RIGHT -> if (checkMoveToRight(game.field)) {
                     set.add(direction)
+                    continue
                 }
 
                 else -> continue
