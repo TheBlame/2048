@@ -1,7 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme._2048" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme._2048" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="gameFieldStyle">@style/GlobalGameFieldStyle</item>
     </style>
+
+    <style name="Theme._2048" parent="Base.Theme._2048" />
+
+    <style name="DefaultGameFieldStyle">
+        <item name="gridColor">@color/field</item>
+        <item name="emptyCellColor">@color/cellEmpty</item>
+        <item name="textColor">@color/white</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlayExtended">
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="AppMarginsCorners">
+        <item name="android:layout_margin">16dp</item>
+        <item name="cornerRadius">4dp</item>
+    </style>
+
+    <style name="GlobalGameFieldStyle" parent="DefaultGameFieldStyle" />
 </resources>

@@ -64,7 +64,10 @@ class GameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state.collectLatest { binding.gameField.game = it }
+                viewModel.state.collectLatest {
+                    binding.gameField.game = it
+                    binding.scoreValue.text = it.score.toString()
+                }
             }
         }
         binding.gameField.setSwipeListener {

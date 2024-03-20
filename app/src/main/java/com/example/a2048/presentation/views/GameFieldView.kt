@@ -61,12 +61,11 @@ class GameFieldView(
         swipeListener = o
     }
 
-    private var gridColor by Delegates.notNull<Int>()
-    private var fieldBackgroundColor by Delegates.notNull<Int>()
+    private var fieldColor by Delegates.notNull<Int>()
+    private var cellEmptyColor by Delegates.notNull<Int>()
     private var textColor by Delegates.notNull<Int>()
 
     private val fieldRect = RectF()
-    private val fieldBackgroundPath = Path()
     private val cellRect = RectF()
     private val cellPath = Path()
     private val textBounds = Rect()
@@ -82,8 +81,7 @@ class GameFieldView(
     private var touchEndX = 0f
     private var touchEndY = 0f
 
-    private lateinit var fieldBackgroundPaint: Paint
-    private lateinit var gridPaint: Paint
+    private lateinit var fieldPaint: Paint
     private lateinit var cell2Paint: Paint
     private lateinit var cell4Paint: Paint
     private lateinit var cell8Paint: Paint
@@ -96,10 +94,16 @@ class GameFieldView(
     private lateinit var cell1024Paint: Paint
     private lateinit var cell2048Paint: Paint
     private lateinit var cellBigNumberPaint: Paint
+    private lateinit var cellEmptyPaint: Paint
     private lateinit var cellTextPaint: Paint
     private val textSize = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         TEXT_SIZE,
+        resources.displayMetrics
+    )
+    private val fieldCornerRadius = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        FIELD_CORNER_RADIUS,
         resources.displayMetrics
     )
 
@@ -133,14 +137,14 @@ class GameFieldView(
         initPaints()
         if (isInEditMode) {
             val list = buildList {
-                repeat(rows) {
-                    add(buildList { repeat(columns) { add(0) } }.toMutableList())
+                repeat(4) {
+                    add(buildList { repeat(4) { add(0) } }.toMutableList())
                 }
             }.toMutableList()
             list[0][0] = 2
-            list[0][1] = 16
-            list[0][2] = 32
-            list[0][3] = 128
+            list[1][1] = 32
+            list[2][2] = 512
+            list[3][3] = 1024
             val rep = GameRepositoryImpl()
             game = rep.startGame(4, 4, list)
         }
@@ -157,37 +161,27 @@ class GameFieldView(
             defStyleAttr,
             defStyleRes
         )
-        fieldBackgroundColor = typedArray.getColor(
-            R.styleable.GameFieldView_fieldBackGroundColor,
-            context.color(R.color.fieldBackground)
+        cellEmptyColor = typedArray.getColor(
+            R.styleable.GameFieldView_emptyCellColor,
+            context.color(R.color.cellEmpty)
         )
-        gridColor =
-            typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.grid))
+        fieldColor =
+            typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.field))
         textColor =
             typedArray.getColor(R.styleable.GameFieldView_textColor, context.color(R.color.white))
         typedArray.recycle()
     }
 
     private fun initDefaultAttr() {
-        fieldBackgroundColor = context.color(R.color.fieldBackground)
-        gridColor = context.color(R.color.grid)
+        cellEmptyColor = context.color(R.color.cellEmpty)
+        fieldColor = context.color(R.color.field)
         textColor = context.color(R.color.white)
     }
 
     private fun initPaints() {
-        fieldBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        fieldBackgroundPaint.color = fieldBackgroundColor
-        fieldBackgroundPaint.style = Paint.Style.FILL
-
-        gridPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        gridPaint.color = gridColor
-        gridPaint.style = Paint.Style.STROKE
-        gridPaint.strokeWidth =
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                GRID_STROKE_WIDTH,
-                resources.displayMetrics
-            )
+        fieldPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        fieldPaint.color = fieldColor
+        fieldPaint.style = Paint.Style.FILL
 
         cell2Paint = Paint(Paint.ANTI_ALIAS_FLAG)
         cell2Paint.color = context.color(R.color.cellValue2)
@@ -236,6 +230,10 @@ class GameFieldView(
         cellBigNumberPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         cellBigNumberPaint.color = Color.BLACK
         cellBigNumberPaint.style = Paint.Style.FILL
+
+        cellEmptyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cellEmptyPaint.color = cellEmptyColor
+        cellEmptyPaint.style = Paint.Style.FILL
 
         cellTextPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         cellTextPaint.color = textColor
@@ -296,32 +294,30 @@ class GameFieldView(
         if (fieldRect.width() <= 0) return
         if (fieldRect.height() <= 0) return
 
-        drawFieldBackground(canvas)
-        drawGrid(canvas)
+        drawField(canvas)
         drawCells(canvas)
     }
 
-    private fun drawFieldBackground(canvas: Canvas) {
-        fieldBackgroundPath.addRect(fieldRect, Path.Direction.CW)
-        canvas.drawPath(fieldBackgroundPath, fieldBackgroundPaint)
+    private fun drawField(canvas: Canvas) {
+        canvas.drawRoundRect(fieldRect, fieldCornerRadius, fieldCornerRadius, fieldPaint)
     }
 
     private fun drawGrid(canvas: Canvas) {
-        if (game == null) return
+        canvas.drawRoundRect(fieldRect, fieldCornerRadius, fieldCornerRadius, fieldPaint)
 
-        val xStart = fieldRect.left
-        val xEnd = fieldRect.right
-        for (i in 0..rows) {
-            val y = fieldRect.top + cellSize * i
-            canvas.drawLine(xStart, y, xEnd, y, gridPaint)
-        }
-
-        val yStart = fieldRect.top
-        val yEnd = fieldRect.bottom
-        for (i in 0..columns) {
-            val x = fieldRect.left + cellSize * i
-            canvas.drawLine(x, yStart, x, yEnd, gridPaint)
-        }
+//        val xStart = fieldRect.left
+//        val xEnd = fieldRect.right
+//        for (i in 1..<rows) {
+//            val y = fieldRect.top + cellSize * i
+//            canvas.drawLine(xStart, y, xEnd, y, gridPaint)
+//        }
+//
+//        val yStart = fieldRect.top
+//        val yEnd = fieldRect.bottom
+//        for (i in 1..<columns) {
+//            val x = fieldRect.left + cellSize * i
+//            canvas.drawLine(x, yStart, x, yEnd, gridPaint)
+//        }
     }
 
     private fun drawCells(canvas: Canvas) {
@@ -335,13 +331,14 @@ class GameFieldView(
     }
 
     private fun drawCell(canvas: Canvas, row: Int, column: Int, cellValue: Int) {
-        if (cellValue == 0) return
 
         val cellAnimation =
-            if (changedCells.contains(CellCoordinates(row, column))) currentCellAnimation else 0f
+            if (changedCells.contains(CellCoordinates(row, column)) && cellValue != 0)
+                currentCellAnimation else 0f
 
         val textAnimation =
-            if (changedCells.contains(CellCoordinates(row, column))) currentTextAnimation else 0f
+            if (changedCells.contains(CellCoordinates(row, column)) && cellValue != 0)
+                currentTextAnimation else 0f
 
         cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + cellAnimation
         cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + cellAnimation
@@ -369,6 +366,8 @@ class GameFieldView(
         textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - cellAnimation
 
         when (cellValue) {
+            0 -> canvas.drawPath(cellPath, cellEmptyPaint)
+
             2 -> canvas.drawPathWithText(
                 cellPath,
                 cell2Paint,
@@ -490,7 +489,7 @@ class GameFieldView(
         val cellHeight = safeHeight / rows.toFloat()
 
         cellSize = min(cellWidth, cellHeight)
-        cellPadding = cellSize * 0.03f
+        cellPadding = cellSize * 0.04f
 
         val fieldWidth = cellSize * columns
         val fieldHeight = cellSize * rows
@@ -555,10 +554,10 @@ class GameFieldView(
     }
 
     companion object {
-        const val GRID_STROKE_WIDTH = 10f
         const val TEXT_SIZE = 50f
         const val ANIMATION_DURATION = 125L
         const val DESIRED_CELL_SIZE = 50f
+        const val FIELD_CORNER_RADIUS = 4f
     }
 }
 
