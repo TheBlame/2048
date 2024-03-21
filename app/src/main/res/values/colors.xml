@@ -2,9 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#808080</color>
     <color name="transparent">#00000000</color>
-    <color name="grid">#FF888888</color>
-    <color name="fieldBackground">#ccc0b3</color>
+    <color name="field">#BAAC9E</color>
+    <color name="appBackground">#FBF7EF</color>
+    <color name="cellEmpty">#D6CBC4</color>
     <color name="cellValue2">#eee4da</color>
     <color name="cellValue4">#ede0c8</color>
     <color name="cellValue8">#f2b179</color>

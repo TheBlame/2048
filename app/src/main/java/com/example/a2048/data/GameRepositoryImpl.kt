@@ -43,7 +43,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
         val possibleMoves = checkPossibleMoves(newGameState)
 
-        if (possibleMoves.isEmpty()) return game.copy(
+        if (possibleMoves.isEmpty()) return newGameState.copy(
             possibleDirections = possibleMoves,
             gameOver = true
         )
@@ -436,4 +436,35 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
         return false
     }
+}
+
+fun main() {
+    val list = buildList {
+        repeat(4) {
+            add(buildList { repeat(4) { add(0) } }.toMutableList())
+        }
+    }.toMutableList()
+    list[0][0] = 2
+    list[0][1] = 64
+    list[0][2] = 4
+    list[0][3] = 2
+    list[1][0] = 4
+    list[1][1] = 128
+    list[1][2] = 16
+    list[1][3] = 4
+    list[2][0] = 16
+    list[2][1] = 64
+    list[2][2] = 32
+    list[2][3] = 2
+    list[3][0] = 2
+    list[3][1] = 8
+    list[3][2] = 16
+    list[3][3] = 4
+
+    val rep = GameRepositoryImpl()
+    val game = rep.startGame(4, 4, list)
+    val game2 = rep.swipeFieldToDirection(game, BOTTOM, true)
+    println(game)
+    println(game2)
+    println(game == game2)
 }
