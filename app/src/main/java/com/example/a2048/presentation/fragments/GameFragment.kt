@@ -1,21 +1,22 @@
 package com.example.a2048.presentation.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.a2048.App2048
-import com.example.a2048.util.Helpers.Companion.lazyViewModel
 import com.example.a2048.databinding.FragmentGameBinding
-
 import com.example.a2048.domain.entity.GameSetting
+import com.example.a2048.presentation.fragments.GameFragment.DialogType.GAME_OVER
+import com.example.a2048.presentation.fragments.GameFragment.DialogType.RESTART_GAME
+import com.example.a2048.util.DialogListener
+import com.example.a2048.util.Helpers.Companion.lazyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,7 +28,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [GameFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameFragment : Fragment() {
+class GameFragment : Fragment(), DialogListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -67,24 +68,51 @@ class GameFragment : Fragment() {
                 viewModel.state.collectLatest {
                     binding.gameField.game = it
                     binding.scoreValue.text = it.score.toString()
+                    if (it.gameOver) showDialog(GAME_OVER)
                 }
             }
         }
         binding.gameField.setSwipeListener {
             viewModel.swipeField(it)
         }
+        binding.retryButton.setOnClickListener {
+            showDialog(RESTART_GAME)
+        }
+        binding.gameOver.setOnClickListener {
+            showDialog(GAME_OVER)
+        }
+    }
+
+    private fun showDialog(dialogType: DialogType) {
+        val dialog = when (dialogType) {
+            RESTART_GAME -> GameRetryDialogFragment()
+
+            GAME_OVER -> GameOverDialogFragment()
+        }
+
+        val tag = when (dialogType) {
+            RESTART_GAME -> GameRetryDialogFragment.TAG
+
+            GAME_OVER -> GameOverDialogFragment.TAG
+        }
+
+        dialog.isCancelable = false
+        dialog.show(childFragmentManager, tag)
+    }
+
+    override fun onPositiveClick() {
+        viewModel.startNewGame()
+    }
+
+    override fun onNegativeClick() {
+
+    }
+
+    enum class DialogType {
+        RESTART_GAME, GAME_OVER
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment GameFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             GameFragment().apply {

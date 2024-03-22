@@ -1,6 +1,5 @@
 package com.example.a2048.presentation.viewmodels
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

@@ -1,10 +1,13 @@
 package com.example.a2048.data
 
-import com.example.a2048.util.CellCoordinates
-import com.example.a2048.util.Direction
-import com.example.a2048.util.Direction.*
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.repository.GameRepository
+import com.example.a2048.util.CellCoordinates
+import com.example.a2048.util.Direction
+import com.example.a2048.util.Direction.BOTTOM
+import com.example.a2048.util.Direction.LEFT
+import com.example.a2048.util.Direction.RIGHT
+import com.example.a2048.util.Direction.TOP
 import com.example.a2048.util.Helpers.Companion.twoDimensionalListToMutableList
 import javax.inject.Inject
 

@@ -1,7 +1,7 @@
 package com.example.a2048.domain.repository
 
-import com.example.a2048.util.Direction
 import com.example.a2048.domain.entity.Game
+import com.example.a2048.util.Direction
 
 interface GameRepository {
 

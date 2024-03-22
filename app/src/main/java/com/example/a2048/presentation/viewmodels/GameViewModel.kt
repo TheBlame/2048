@@ -2,10 +2,10 @@ package com.example.a2048.presentation.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.a2048.util.Direction
 import com.example.a2048.domain.entity.GameSetting
 import com.example.a2048.domain.usecases.StartGameUseCase
 import com.example.a2048.domain.usecases.SwipeFieldToDirectionUseCase
+import com.example.a2048.util.Direction
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -24,6 +24,10 @@ class GameViewModel @AssistedInject constructor(
 
     val swipeField: ((Direction) -> Unit) = {
         _state.value = swipeFieldToDirectionUseCase.invoke(_state.value, it)
+    }
+
+    fun startNewGame() {
+        _state.value = startGameUseCase(gameSetting)
     }
 
     @AssistedFactory

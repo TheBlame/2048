@@ -13,6 +13,10 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.view.marginBottom
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
 import com.example.a2048.R
 import com.example.a2048.data.GameRepositoryImpl
 import com.example.a2048.domain.entity.Game
@@ -109,6 +113,9 @@ class GameFieldView(
 
     private lateinit var cellAnimator: ValueAnimator
     private lateinit var textAnimator: ValueAnimator
+
+    private var cellAnimationValue = 0f
+    private var textAnimationValue = 0f
 
     private var currentCellAnimation = 0f
     private var currentTextAnimation = 0f
@@ -248,11 +255,13 @@ class GameFieldView(
         val minWidth = suggestedMinimumWidth + paddingLeft + paddingRight
         val minHeight = suggestedMinimumHeight + paddingTop + paddingBottom
 
-        val desiredCellSizeInPixels = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            DESIRED_CELL_SIZE,
-            resources.displayMetrics
-        ).toInt()
+        val screenWidth =
+            MeasureSpec.getSize(widthMeasureSpec) - marginStart - marginEnd - paddingLeft - paddingRight
+
+        val screenHeight =
+            MeasureSpec.getSize(heightMeasureSpec) - marginTop - marginBottom - paddingTop - paddingBottom
+
+        val desiredCellSizeInPixels = min(screenWidth, screenHeight) / columns
 
         val desiredWidth =
             max(minWidth, columns * desiredCellSizeInPixels + paddingLeft + paddingRight)
@@ -332,24 +341,24 @@ class GameFieldView(
 
     private fun drawCell(canvas: Canvas, row: Int, column: Int, cellValue: Int) {
 
-        val cellAnimation =
+        currentCellAnimation =
             if (changedCells.contains(CellCoordinates(row, column)) && cellValue != 0)
-                currentCellAnimation else 0f
+                cellAnimationValue else 0f
 
-        val textAnimation =
+        currentTextAnimation =
             if (changedCells.contains(CellCoordinates(row, column)) && cellValue != 0)
-                currentTextAnimation else 0f
+                textAnimationValue else 0f
 
-        cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + cellAnimation
-        cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + cellAnimation
-        cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - cellAnimation * 2
-        cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - cellAnimation * 2
+        cellRect.left = (fieldRect.left + column * cellSize + cellPadding) + currentCellAnimation
+        cellRect.top = (fieldRect.top + row * cellSize + cellPadding) + currentCellAnimation
+        cellRect.right = (cellRect.left + cellSize - cellPadding * 2) - currentCellAnimation * 2
+        cellRect.bottom = (cellRect.top + cellSize - cellPadding * 2) - currentCellAnimation * 2
 
         cellPath.addRoundRect(cellRect, cellPadding * 2, cellPadding * 2, Path.Direction.CW)
 
         cellTextPaint.textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            TEXT_SIZE - textAnimation,
+            TEXT_SIZE - currentTextAnimation,
             resources.displayMetrics
         )
         textLength = cellTextPaint.measureText(cellValue.toString())
@@ -362,8 +371,8 @@ class GameFieldView(
         )
         textHeight = textBounds.height()
 
-        textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - cellAnimation
-        textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - cellAnimation
+        textX = (cellRect.left + cellSize / 2 - textLength / 2 - cellPadding) - currentCellAnimation
+        textY = (cellRect.top + cellSize / 2 + textHeight / 2 - cellPadding) - currentCellAnimation
 
         when (cellValue) {
             0 -> canvas.drawPath(cellPath, cellEmptyPaint)
@@ -514,7 +523,7 @@ class GameFieldView(
             reverse()
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { valueAnimator ->
-                currentTextAnimation = valueAnimator.animatedValue as Float
+                textAnimationValue = valueAnimator.animatedValue as Float
             }
         }
 
@@ -523,7 +532,7 @@ class GameFieldView(
             reverse()
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { valueAnimator ->
-                currentCellAnimation = valueAnimator.animatedValue as Float
+                cellAnimationValue = valueAnimator.animatedValue as Float
                 invalidate()
             }
         }
@@ -555,8 +564,7 @@ class GameFieldView(
 
     companion object {
         const val TEXT_SIZE = 50f
-        const val ANIMATION_DURATION = 125L
-        const val DESIRED_CELL_SIZE = 50f
+        const val ANIMATION_DURATION = 150L
         const val FIELD_CORNER_RADIUS = 4f
     }
 }
