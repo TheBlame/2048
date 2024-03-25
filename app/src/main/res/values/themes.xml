@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme._2048" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -12,7 +12,8 @@
     <style name="DefaultGameFieldStyle">
         <item name="gridColor">@color/field</item>
         <item name="emptyCellColor">@color/cellEmpty</item>
-        <item name="textColor">@color/white</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="animationDuration">0</item>
     </style>
 
     <style name="ShapeAppearanceOverlayExtended">

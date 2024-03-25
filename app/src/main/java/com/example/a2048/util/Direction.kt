@@ -1,7 +1,7 @@
 package com.example.a2048.util
 
 enum class Direction {
-    TOP, BOTTOM, LEFT, RIGHT, NONE;
+    TOP, BOTTOM, LEFT, RIGHT;
 
     companion object {
         operator fun get(angle: Float): Direction {
