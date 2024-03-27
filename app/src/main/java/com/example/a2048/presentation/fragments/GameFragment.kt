@@ -78,9 +78,6 @@ class GameFragment : Fragment(), DialogListener {
         binding.retryButton.setOnClickListener {
             showDialog(RESTART_GAME)
         }
-        binding.gameOver.setOnClickListener {
-            showDialog(GAME_OVER)
-        }
     }
 
     private fun showDialog(dialogType: DialogType) {

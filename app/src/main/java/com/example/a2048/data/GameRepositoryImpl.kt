@@ -358,7 +358,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             LEFT ->
                 for (row in field.indices) {
-                    for (column in field.indices) {
+                    for (column in field[row].indices) {
                         if (column == field[row].size - 1 || field[row][column] == 0) {
                             continue
                         } else if (field[row][column + 1] == field[row][column]) {
@@ -371,7 +371,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             RIGHT ->
                 for (row in field.indices) {
-                    for (column in field.size - 1 downTo 1) {
+                    for (column in field[row].size - 1 downTo 1) {
                         if (field[row][column] == 0) {
                             continue
                         } else if (field[row][column - 1] == field[row][column]) {
@@ -414,7 +414,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             LEFT ->
                 for (row in game.field.indices) {
-                    for (column in game.field.indices) {
+                    for (column in game.field[row].indices) {
                         if (column == game.field[row].size - 1 || game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row][column + 1] == game.field[row][column]) {
@@ -425,7 +425,7 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
             RIGHT ->
                 for (row in game.field.indices) {
-                    for (column in game.field.size - 1 downTo 1) {
+                    for (column in game.field[row].size - 1 downTo 1) {
                         if (game.field[row][column] == 0) {
                             continue
                         } else if (game.field[row][column - 1] == game.field[row][column]) {

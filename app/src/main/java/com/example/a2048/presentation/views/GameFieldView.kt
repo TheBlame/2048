@@ -143,7 +143,7 @@ class GameFieldView(
         initPaints()
         if (isInEditMode) {
             val list = buildList {
-                repeat(4) {
+                repeat(6) {
                     add(buildList { repeat(4) { add(0) } }.toMutableList())
                 }
             }.toMutableList()
@@ -265,7 +265,11 @@ class GameFieldView(
         val screenHeight =
             MeasureSpec.getSize(heightMeasureSpec) - marginTop - marginBottom - paddingTop - paddingBottom
 
-        val desiredCellSizeInPixels = min(screenWidth, screenHeight) / columns
+        val desiredCellWidthInPixels = screenWidth / columns
+
+        val desiredCellHeightInPixels = screenHeight / rows
+
+        val desiredCellSizeInPixels = min(desiredCellHeightInPixels, desiredCellWidthInPixels)
 
         val desiredWidth =
             max(minWidth, columns * desiredCellSizeInPixels + paddingLeft + paddingRight)
@@ -347,18 +351,25 @@ class GameFieldView(
 
         darkBackgroundTextPaint.textSize = textSize - currentTextAnimation
 
-        while (darkBackgroundTextPaint.measureText(cellValue.toString()) > cellSize - cellPadding * 2) {
-            darkBackgroundTextPaint.textSize--
-        }
-
-        textLength = darkBackgroundTextPaint.measureText(cellValue.toString())
-
         darkBackgroundTextPaint.getTextBounds(
             cellValue.toString(),
             0,
             cellValue.toString().length,
             textBounds
         )
+
+        while (darkBackgroundTextPaint.measureText(cellValue.toString()) > cellSize - cellPadding * 2 || textBounds.height() > cellSize - cellPadding * 2) {
+            darkBackgroundTextPaint.textSize--
+            darkBackgroundTextPaint.getTextBounds(
+                cellValue.toString(),
+                0,
+                cellValue.toString().length,
+                textBounds
+            )
+        }
+
+        textLength = darkBackgroundTextPaint.measureText(cellValue.toString())
+
         textHeight = textBounds.height()
 
         textX =
@@ -497,15 +508,15 @@ class GameFieldView(
         cellSize = min(cellWidth, cellHeight) - cellPadding / columns
 
         textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
+            TypedValue.COMPLEX_UNIT_SP,
             cellSize * 0.16f,
             resources.displayMetrics
         )
 
         fieldRect.left = paddingLeft.toFloat()
         fieldRect.top = paddingTop.toFloat()
-        fieldRect.right = fieldRect.left + fieldWidth
-        fieldRect.bottom = fieldRect.top + fieldHeight
+        fieldRect.right = fieldRect.left + cellSize * columns + cellPadding + paddingRight
+        fieldRect.bottom = fieldRect.top + cellSize * rows + cellPadding + paddingBottom
     }
 
     private fun getAngle(startX: Float, startY: Float, endX: Float, endY: Float): Float {
@@ -519,7 +530,6 @@ class GameFieldView(
     private fun parseMovement(startX: Float, startY: Float, endX: Float, endY: Float, direction: Direction): Float {
         return when(direction) {
             TOP -> (endY - startY).absoluteValue
-
             BOTTOM -> (startY - endY).absoluteValue
             LEFT -> (endX - startX).absoluteValue
             RIGHT -> (startX - endX).absoluteValue

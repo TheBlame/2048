@@ -13,9 +13,6 @@
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
@@ -27,15 +24,13 @@
         app:iconSize="24dp"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/gameField"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/gameField"
+        app:layout_constraintTop_toBottomOf="@+id/scoreCard" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
@@ -47,20 +42,20 @@
         app:iconSize="24dp"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/gameField"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/gameField" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/scoreCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="8dp"
         app:cardBackgroundColor="@color/field"
         app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toTopOf="@id/retryButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/gameField"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         app:strokeColor="@color/field">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -100,27 +95,19 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/gameOver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="center_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gameField" />
-
     <com.example.a2048.presentation.views.GameFieldView
         android:id="@+id/gameField"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
         app:animationDuration="150"
         app:cornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/retryButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
