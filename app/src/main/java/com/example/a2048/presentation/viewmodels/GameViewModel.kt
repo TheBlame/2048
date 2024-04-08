@@ -2,7 +2,7 @@ package com.example.a2048.presentation.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.a2048.domain.entity.GameSetting
+import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.domain.usecases.StartGameUseCase
 import com.example.a2048.domain.usecases.SwipeFieldToDirectionUseCase
 import com.example.a2048.util.Direction
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class GameViewModel @AssistedInject constructor(
     private val startGameUseCase: StartGameUseCase,
     private val swipeFieldToDirectionUseCase: SwipeFieldToDirectionUseCase,
-    @Assisted private val gameSetting: GameSetting,
+    @Assisted private val gameSetting: GameMode,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -32,6 +32,6 @@ class GameViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(gameSetting: GameSetting?, savedStateHandle: SavedStateHandle): GameViewModel
+        fun create(gameSetting: GameMode?, savedStateHandle: SavedStateHandle): GameViewModel
     }
 }

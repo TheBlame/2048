@@ -9,7 +9,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.a2048.R
 import com.example.a2048.databinding.FragmentMainMenuBinding
-import com.example.a2048.domain.entity.GameSetting
+import com.example.a2048.domain.entity.GameMode
+import com.example.a2048.domain.entity.GameMode.MODE3x5
+import com.example.a2048.domain.entity.GameMode.MODE4x4
+import com.example.a2048.domain.entity.GameMode.MODE4x6
+import com.example.a2048.domain.entity.GameMode.MODE5x5
+import com.example.a2048.domain.entity.GameMode.MODE5x8
+import com.example.a2048.domain.entity.GameMode.MODE6x6
+import com.example.a2048.domain.entity.GameMode.MODE6x9
+import com.example.a2048.domain.entity.GameMode.MODE8x8
 import com.google.android.material.card.MaterialCardView
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,7 +35,7 @@ class MainMenuFragment : Fragment() {
     private val binding: FragmentMainMenuBinding
         get() = _binding ?: throw RuntimeException("MainMenuFragment == null")
 
-    private var gameSetting: GameSetting = GameSetting(4, 4)
+    private lateinit var gameMode: GameMode
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,11 +52,11 @@ class MainMenuFragment : Fragment() {
             binding.root.findViewById<MaterialCardView>(id).setOnClickListener {
                 resetSquareGroupCheck()
                 binding.root.findViewById<MaterialCardView>(id).isChecked = true
-                gameSetting = when (binding.root.findViewById<MaterialCardView>(id)) {
-                    binding.card1 -> GameSetting(4, 4)
-                    binding.card2 -> GameSetting(5, 5)
-                    binding.card3 -> GameSetting(6, 6)
-                    binding.card4 -> GameSetting(8, 8)
+                gameMode = when (binding.root.findViewById<MaterialCardView>(id)) {
+                    binding.card1 -> MODE4x4
+                    binding.card2 -> MODE5x5
+                    binding.card3 -> MODE6x6
+                    binding.card4 -> MODE8x8
                     else -> throw Exception("Unknown card id")
                 }
             }
@@ -57,11 +65,11 @@ class MainMenuFragment : Fragment() {
             binding.root.findViewById<MaterialCardView>(id).setOnClickListener {
                 resetRectangleGroupCheck()
                 binding.root.findViewById<MaterialCardView>(id).isChecked = true
-                gameSetting = when (binding.root.findViewById<MaterialCardView>(id)) {
-                    binding.rectangleCard1 -> GameSetting(5, 3)
-                    binding.rectangleCard2 -> GameSetting(6, 4)
-                    binding.rectangleCard3 -> GameSetting(8, 5)
-                    binding.rectangleCard4 -> GameSetting(9, 6)
+                gameMode = when (binding.root.findViewById<MaterialCardView>(id)) {
+                    binding.rectangleCard1 -> MODE3x5
+                    binding.rectangleCard2 -> MODE4x6
+                    binding.rectangleCard3 -> MODE5x8
+                    binding.rectangleCard4 -> MODE6x9
                     else -> throw Exception("Unknown card id")
                 }
             }
@@ -87,7 +95,7 @@ class MainMenuFragment : Fragment() {
         }
         binding.playButton.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, GameFragment.newInstance(gameSetting))
+                .replace(R.id.fragment_container, GameFragment.newInstance(gameMode))
                 .addToBackStack(null)
                 .commit()
         }
@@ -98,7 +106,7 @@ class MainMenuFragment : Fragment() {
         binding.groupRectangleMode.visibility = GONE
         binding.card1.isChecked = true
         binding.mode1.isChecked = true
-        gameSetting = GameSetting(4, 4)
+        gameMode = MODE4x4
     }
 
     private fun initRectangleMode() {
@@ -106,7 +114,7 @@ class MainMenuFragment : Fragment() {
         binding.groupRectangleMode.visibility = VISIBLE
         binding.rectangleCard1.isChecked = true
         binding.mode2.isChecked = true
-        gameSetting = GameSetting(5, 3)
+        gameMode = MODE3x5
     }
 
     private fun resetSquareGroupCheck() {

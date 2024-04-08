@@ -1,6 +1,7 @@
 package com.example.a2048.data
 
 import com.example.a2048.domain.entity.Game
+import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.domain.repository.GameRepository
 import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
@@ -13,19 +14,20 @@ import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor() : GameRepository {
 
-    override fun startGame(rows: Int, columns: Int, startingField: List<List<Int>>?): Game {
+    override fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
         var game: Game
+        val gameSetting = gameMode.getGameSetting()
 
         if (startingField != null) {
-            game = Game(startingField)
+            game = Game(gameMode,startingField)
         } else {
             val list = buildList {
-                repeat(rows) {
-                    add(buildList { repeat(columns) { add(0) } })
+                repeat(gameSetting.rows) {
+                    add(buildList { repeat(gameSetting.columns) { add(0) } })
                 }
             }
 
-            game = Game(list)
+            game = Game(gameMode, list)
             repeat(2) { game = addNumberToField(game) }
 
         }
@@ -439,35 +441,4 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
 
         return false
     }
-}
-
-fun main() {
-    val list = buildList {
-        repeat(4) {
-            add(buildList { repeat(4) { add(0) } }.toMutableList())
-        }
-    }.toMutableList()
-    list[0][0] = 2
-    list[0][1] = 64
-    list[0][2] = 4
-    list[0][3] = 2
-    list[1][0] = 4
-    list[1][1] = 128
-    list[1][2] = 16
-    list[1][3] = 4
-    list[2][0] = 16
-    list[2][1] = 64
-    list[2][2] = 32
-    list[2][3] = 2
-    list[3][0] = 2
-    list[3][1] = 8
-    list[3][2] = 16
-    list[3][3] = 4
-
-    val rep = GameRepositoryImpl()
-    val game = rep.startGame(4, 4, list)
-    val game2 = rep.swipeFieldToDirection(game, BOTTOM, true)
-    println(game)
-    println(game2)
-    println(game == game2)
 }

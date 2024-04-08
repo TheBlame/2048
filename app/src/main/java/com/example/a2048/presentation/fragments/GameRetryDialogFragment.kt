@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.a2048.R
 import com.example.a2048.databinding.DialogGameRetryBinding
-import com.example.a2048.util.DialogListener
+import com.example.a2048.util.IDialogListener
 
 class GameRetryDialogFragment : DialogFragment() {
-    private lateinit var listener: DialogListener
+    private lateinit var listener: IDialogListener
 
     private var _binding: DialogGameRetryBinding? = null
     private val binding: DialogGameRetryBinding
@@ -31,7 +31,7 @@ class GameRetryDialogFragment : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            listener = parentFragment as DialogListener
+            listener = parentFragment as IDialogListener
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 (context.toString() +

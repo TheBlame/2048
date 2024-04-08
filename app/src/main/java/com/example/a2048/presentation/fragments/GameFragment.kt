@@ -10,11 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.a2048.App2048
 import com.example.a2048.databinding.FragmentGameBinding
-import com.example.a2048.domain.entity.GameSetting
+import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.presentation.fragments.GameFragment.DialogType.GAME_OVER
 import com.example.a2048.presentation.fragments.GameFragment.DialogType.RESTART_GAME
-import com.example.a2048.util.DialogListener
 import com.example.a2048.util.Helpers.Companion.lazyViewModel
+import com.example.a2048.util.IDialogListener
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -28,9 +28,9 @@ private const val ARG_PARAM2 = "param2"
  * Use the [GameFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GameFragment : Fragment(), DialogListener {
+class GameFragment : Fragment(), IDialogListener {
     // TODO: Rename and change types of parameters
-    private var args: GameSetting? = null
+    private var args: GameMode? = null
 
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
@@ -113,7 +113,7 @@ class GameFragment : Fragment(), DialogListener {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: GameSetting) =
+        fun newInstance(param1: GameMode) =
             GameFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_PARAM1, param1)

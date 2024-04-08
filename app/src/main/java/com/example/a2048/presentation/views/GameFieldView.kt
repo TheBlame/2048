@@ -21,6 +21,7 @@ import androidx.core.view.marginTop
 import com.example.a2048.R
 import com.example.a2048.data.GameRepositoryImpl
 import com.example.a2048.domain.entity.Game
+import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
 import com.example.a2048.util.Direction.BOTTOM
@@ -152,7 +153,7 @@ class GameFieldView(
             list[2][2] = 512
             list[3][3] = 1024
             val rep = GameRepositoryImpl()
-            game = rep.startGame(4, 4, list)
+            game = rep.startGame(GameMode.MODE4x4, list)
         }
     }
 

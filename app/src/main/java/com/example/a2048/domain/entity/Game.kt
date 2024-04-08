@@ -4,6 +4,7 @@ import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
 
 data class Game(
+    val gameMode: GameMode,
     val field: List<List<Int>>,
     val score: Int = 0,
     val possibleDirections: Set<Direction> = setOf(),

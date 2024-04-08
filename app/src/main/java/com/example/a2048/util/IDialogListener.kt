@@ -1,6 +1,6 @@
 package com.example.a2048.util
 
-interface DialogListener {
+interface IDialogListener {
     fun onPositiveClick()
     fun onNegativeClick()
 }
