@@ -30,8 +30,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class GameFragment : Fragment(), DialogListener {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var args: GameSetting? = null
 
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
@@ -42,14 +41,14 @@ class GameFragment : Fragment(), DialogListener {
     }
 
     private val viewModel by lazyViewModel { savedStateHandle ->
-        component.gameViewModel().create(GameSetting(4, 4), savedStateHandle)
+        component.gameViewModel().create(args, savedStateHandle)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            args = it.getParcelable(ARG_PARAM1)
+
         }
     }
 
@@ -78,6 +77,9 @@ class GameFragment : Fragment(), DialogListener {
         binding.retryButton.setOnClickListener {
             showDialog(RESTART_GAME)
         }
+        binding.homeButton.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun showDialog(dialogType: DialogType) {
@@ -102,7 +104,7 @@ class GameFragment : Fragment(), DialogListener {
     }
 
     override fun onNegativeClick() {
-
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
     enum class DialogType {
@@ -111,11 +113,10 @@ class GameFragment : Fragment(), DialogListener {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: GameSetting) =
             GameFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(ARG_PARAM1, param1)
                 }
             }
     }

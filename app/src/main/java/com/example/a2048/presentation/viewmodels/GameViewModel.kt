@@ -32,6 +32,6 @@ class GameViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(gameSetting: GameSetting, savedStateHandle: SavedStateHandle): GameViewModel
+        fun create(gameSetting: GameSetting?, savedStateHandle: SavedStateHandle): GameViewModel
     }
 }
