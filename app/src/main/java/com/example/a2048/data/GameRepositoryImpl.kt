@@ -1,7 +1,9 @@
 package com.example.a2048.data
 
+import com.example.a2048.data.database.AppDatabase
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
+import com.example.a2048.domain.entity.GameScore
 import com.example.a2048.domain.repository.GameRepository
 import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
@@ -9,10 +11,15 @@ import com.example.a2048.util.Direction.BOTTOM
 import com.example.a2048.util.Direction.LEFT
 import com.example.a2048.util.Direction.RIGHT
 import com.example.a2048.util.Direction.TOP
+import com.example.a2048.util.Helpers.Companion.mapGameAndDateToScoreDbModel
+import com.example.a2048.util.Helpers.Companion.mapScoreDbModelToGameScore
 import com.example.a2048.util.Helpers.Companion.twoDimensionalListToMutableList
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
-class GameRepositoryImpl @Inject constructor() : GameRepository {
+class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : GameRepository {
 
     override fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
         var game: Game
@@ -56,6 +63,24 @@ class GameRepositoryImpl @Inject constructor() : GameRepository {
         return newGameState.copy(
             possibleDirections = possibleMoves
         )
+    }
+
+    override suspend fun saveScore(game: Game) {
+        val date = SimpleDateFormat("MMM dd yyyy, h:mm", Locale.getDefault())
+        val dateFormat: String = date.format(Calendar.getInstance().time)
+        db.dbDao().saveScore(mapGameAndDateToScoreDbModel(game, dateFormat))
+    }
+
+    override suspend fun getScoresByMode(gameMode: GameMode): List<GameScore> {
+        return buildList {
+            db.dbDao().getScoresByMode(gameMode).iterator().forEachRemaining {
+                this.add(mapScoreDbModelToGameScore(it))
+            }
+        }
+    }
+
+    override suspend fun getTopScoreByMode(gameMode: GameMode): Int {
+        return db.dbDao().getTopScoreByMode(gameMode) ?: 0
     }
 
     private fun checkPossibleMoves(game: Game): Set<Direction> {

@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.example.a2048.data.database.dbmodels.ScoreDbModel
+import com.example.a2048.domain.entity.Game
+import com.example.a2048.domain.entity.GameScore
 import com.example.a2048.presentation.viewmodels.Factory
 
 class Helpers {
@@ -29,5 +32,11 @@ class Helpers {
 
         fun <T> List<List<T>>.twoDimensionalListToMutableList() =
             map { it.toMutableList() }.toMutableList()
+
+        fun mapGameAndDateToScoreDbModel(game: Game, date: String) =
+            ScoreDbModel(date, game.score, game.gameMode)
+
+        fun mapScoreDbModelToGameScore(scoreDbModel: ScoreDbModel) =
+            GameScore(scoreDbModel.date, scoreDbModel.score)
     }
 }

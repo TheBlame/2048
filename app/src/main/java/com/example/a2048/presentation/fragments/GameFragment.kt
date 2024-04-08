@@ -65,9 +65,16 @@ class GameFragment : Fragment(), IDialogListener {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collectLatest {
-                    binding.gameField.game = it
-                    binding.scoreValue.text = it.score.toString()
-                    if (it.gameOver) showDialog(GAME_OVER)
+                    binding.gameField.game = it.game
+                    binding.scoreValue.text = it.game.score.toString()
+                    binding.recordValue.text = it.topScore.toString()
+                    if (it.game.score > it.topScore) {
+                        binding.recordValue.text = it.game.score.toString()
+                    }
+                    if (it.game.gameOver) {
+                        showDialog(GAME_OVER)
+                        viewModel.saveScore()
+                    }
                 }
             }
         }
