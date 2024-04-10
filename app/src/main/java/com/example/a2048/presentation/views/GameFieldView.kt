@@ -19,8 +19,6 @@ import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
 import com.example.a2048.R
-import com.example.a2048.data.GameRepositoryImpl
-import com.example.a2048.data.database.AppDatabase
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.util.CellCoordinates
@@ -46,13 +44,13 @@ class GameFieldView(
 
     var game: Game? = null
         set(value) {
-            if (value != null) {
+            if (value != null && !value.field.contains(emptyList())) {
                 changedCells.clear()
                 value.lastAddedCell?.let { changedCells.add(it) }
                 checkChangedCells(game?.field, value.field)
                 field = value
-                rows = value.field.size
-                columns = value.field.first().size
+                rows = value.gameMode.getGameSetting().rows
+                columns = value.gameMode.getGameSetting().columns
                 updateViewSizes()
                 requestLayout()
                 invalidate()
@@ -153,8 +151,8 @@ class GameFieldView(
             list[1][1] = 32
             list[2][2] = 512
             list[3][3] = 1024
-            val rep = GameRepositoryImpl(db = AppDatabase.getInstance(context))
-            game = rep.startGame(GameMode.MODE4x4, list)
+
+            game = Game(GameMode.MODE4x4, list, 0)
         }
     }
 
@@ -177,7 +175,10 @@ class GameFieldView(
             typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.field))
         cornerRadius =
             typedArray.getDimension(R.styleable.GameFieldView_cornerRadius, DEFAULT_FIELD_CORNER)
-        animationDuration = typedArray.getInt(R.styleable.GameFieldView_animationDuration, DEFAULT_ANIMATION_DURATION)
+        animationDuration = typedArray.getInt(
+            R.styleable.GameFieldView_animationDuration,
+            DEFAULT_ANIMATION_DURATION
+        )
         typedArray.recycle()
     }
 
@@ -255,11 +256,20 @@ class GameFieldView(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         updateViewSizes()
+        startAnimation()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val minWidth = suggestedMinimumWidth + paddingLeft + paddingRight
         val minHeight = suggestedMinimumHeight + paddingTop + paddingBottom
+
+        if (game == null) {
+            setMeasuredDimension(
+                resolveSize(minWidth, widthMeasureSpec),
+                resolveSize(minHeight, heightMeasureSpec)
+            )
+            return
+        }
 
         val screenWidth =
             MeasureSpec.getSize(widthMeasureSpec) - marginStart - marginEnd - paddingLeft - paddingRight
@@ -302,7 +312,8 @@ class GameFieldView(
             MotionEvent.ACTION_UP -> {
                 val angle = getAngle(touchStartX, touchStartY, touchEndX, touchEndY)
                 val direction = Direction[angle]
-                val movement = parseMovement(touchStartX, touchStartY, touchEndX, touchEndY, direction)
+                val movement =
+                    parseMovement(touchStartX, touchStartY, touchEndX, touchEndY, direction)
                 if (movement >= cellSize) swipeListener?.invoke(direction)
                 return true
             }
@@ -529,8 +540,14 @@ class GameFieldView(
         return ((180f / PI.toFloat() * radian) + 360) % 360
     }
 
-    private fun parseMovement(startX: Float, startY: Float, endX: Float, endY: Float, direction: Direction): Float {
-        return when(direction) {
+    private fun parseMovement(
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float,
+        direction: Direction
+    ): Float {
+        return when (direction) {
             TOP -> (endY - startY).absoluteValue
             BOTTOM -> (startY - endY).absoluteValue
             LEFT -> (endX - startX).absoluteValue
@@ -560,12 +577,20 @@ class GameFieldView(
     }
 
     private fun checkChangedCells(oldList: List<List<Int>>?, newList: List<List<Int>>) {
-        if (oldList == null) return
-
-        for (row in oldList.indices) {
-            for (column in oldList[row].indices) {
-                if (oldList[row][column] != newList[row][column]) {
-                    changedCells.add(CellCoordinates(row, column))
+        if (oldList == null) {
+            for (row in newList.indices) {
+                for (column in newList[row].indices) {
+                    if (newList[row][column] != 0) {
+                        changedCells.add(CellCoordinates(row, column))
+                    }
+                }
+            }
+        } else {
+            for (row in oldList.indices) {
+                for (column in oldList[row].indices) {
+                    if (oldList[row][column] != newList[row][column]) {
+                        changedCells.add(CellCoordinates(row, column))
+                    }
                 }
             }
         }

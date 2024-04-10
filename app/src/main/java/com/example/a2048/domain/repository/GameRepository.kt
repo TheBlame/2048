@@ -7,13 +7,11 @@ import com.example.a2048.util.Direction
 
 interface GameRepository {
 
-    fun startGame(gameMode: GameMode, startingField: List<List<Int>>? = null): Game
+    suspend fun startGame(gameMode: GameMode, startingField: List<List<Int>>? = null): Game
 
     fun swipeFieldToDirection(game: Game, direction: Direction, testMode: Boolean = false): Game
 
     suspend fun saveScore(game: Game)
 
     suspend fun getScoresByMode(gameMode: GameMode): List<GameScore>
-
-    suspend fun getTopScoreByMode(gameMode: GameMode): Int
 }

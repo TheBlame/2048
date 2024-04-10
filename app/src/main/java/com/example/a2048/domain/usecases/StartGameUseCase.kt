@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class StartGameUseCase @Inject constructor(private val repository: GameRepository) {
 
-    operator fun invoke(gameMode: GameMode, startingField: List<List<Int>>? = null): Game {
+    suspend operator fun invoke(gameMode: GameMode, startingField: List<List<Int>>? = null): Game {
         return repository.startGame(gameMode, startingField)
     }
 }

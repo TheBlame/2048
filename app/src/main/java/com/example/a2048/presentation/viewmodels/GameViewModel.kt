@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
-import com.example.a2048.domain.usecases.GetTopScoreByModeUseCase
 import com.example.a2048.domain.usecases.SaveScoreUseCase
 import com.example.a2048.domain.usecases.StartGameUseCase
 import com.example.a2048.domain.usecases.SwipeFieldToDirectionUseCase
@@ -13,49 +12,46 @@ import com.example.a2048.util.Direction
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GameViewModel @AssistedInject constructor(
     private val startGameUseCase: StartGameUseCase,
-    private val getTopScoreByModeUseCase: GetTopScoreByModeUseCase,
     private val saveScoreUseCase: SaveScoreUseCase,
     private val swipeFieldToDirectionUseCase: SwipeFieldToDirectionUseCase,
     @Assisted private val gameMode: GameMode,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private var topScore = 0
 
-    private val _state = MutableStateFlow(GameVmState(startGameUseCase(gameMode), topScore))
+    private val _state = MutableStateFlow(Game(gameMode, listOf(listOf()), 0))
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            topScore = getTopScoreByModeUseCase(gameMode)
-            _state.value = _state.value.copy(topScore = topScore)
+            _state.value = startGameUseCase(gameMode)
         }
     }
 
     val swipeField: ((Direction) -> Unit) = {
-        _state.value = _state.value.copy(game = swipeFieldToDirectionUseCase.invoke(_state.value.game, it))
+        _state.value = swipeFieldToDirectionUseCase.invoke(_state.value, it)
     }
 
     fun startNewGame() {
-        _state.value = _state.value.copy(game = startGameUseCase(gameMode))
+        viewModelScope.launch {
+            _state.value = startGameUseCase(gameMode)
+        }
     }
 
-    suspend fun saveScore() {
-        saveScoreUseCase.invoke(_state.value.game)
+    fun saveScore() {
+        viewModelScope.launch(Dispatchers.IO) {
+            saveScoreUseCase(_state.value)
+        }
     }
 
     @AssistedFactory
     interface Factory {
         fun create(gameSetting: GameMode?, savedStateHandle: SavedStateHandle): GameViewModel
     }
-
-    data class GameVmState(
-        val game: Game,
-        val topScore: Int
-    )
 }

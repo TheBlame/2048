@@ -21,12 +21,12 @@ import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : GameRepository {
 
-    override fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
+    override suspend fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
         var game: Game
         val gameSetting = gameMode.getGameSetting()
 
         if (startingField != null) {
-            game = Game(gameMode,startingField)
+            game = Game(gameMode,startingField, 0)
         } else {
             val list = buildList {
                 repeat(gameSetting.rows) {
@@ -34,7 +34,9 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                 }
             }
 
-            game = Game(gameMode, list)
+            val topScore = db.dbDao().getTopScoreByMode(gameMode) ?: 0
+
+            game = Game(gameMode, list, topScore)
             repeat(2) { game = addNumberToField(game) }
 
         }
@@ -77,10 +79,6 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                 this.add(mapScoreDbModelToGameScore(it))
             }
         }
-    }
-
-    override suspend fun getTopScoreByMode(gameMode: GameMode): Int {
-        return db.dbDao().getTopScoreByMode(gameMode) ?: 0
     }
 
     private fun checkPossibleMoves(game: Game): Set<Direction> {
