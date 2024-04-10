@@ -12,7 +12,7 @@ interface DbDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveScore(scoreDbModel: ScoreDbModel)
 
-    @Query("SELECT * FROM scores WHERE mode == :mode ORDER BY score DESC LIMIT 10")
+    @Query("SELECT * FROM scores WHERE mode == :mode ORDER BY score DESC LIMIT 5")
     suspend fun getScoresByMode(mode: GameMode): List<ScoreDbModel>
 
     @Query("SELECT MAX(score) FROM scores WHERE mode == :mode")

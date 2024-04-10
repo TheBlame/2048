@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -120,10 +119,10 @@ class GameFragment : Fragment(), IDialogListener {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: GameMode) =
+        fun newInstance(gameMode: GameMode) =
             GameFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_PARAM1, param1)
+                    putParcelable(ARG_PARAM1, gameMode)
                 }
             }
     }

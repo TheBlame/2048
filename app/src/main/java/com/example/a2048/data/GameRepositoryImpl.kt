@@ -66,7 +66,7 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
     }
 
     override suspend fun saveScore(game: Game) {
-        val date = SimpleDateFormat("MMM dd yyyy, h:mm", Locale.getDefault())
+        val date = SimpleDateFormat("dd.MM.yyyy, h:mm", Locale.getDefault())
         val dateFormat: String = date.format(Calendar.getInstance().time)
         db.dbDao().saveScore(mapGameAndDateToScoreDbModel(game, dateFormat))
     }
@@ -107,8 +107,6 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                     set.add(direction)
                     continue
                 }
-
-                else -> continue
             }
 
             if (checkAddition(game, direction)) {
@@ -159,8 +157,6 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
             LEFT -> moveFieldToLeft(game)
 
             RIGHT -> moveFieldToRight(game)
-
-            else -> return game
         }
 
         val moved = checkMove(newGameState.field, direction)
@@ -345,10 +341,7 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                     }
                 }
             }
-
-            else -> return false
         }
-
         return result
     }
 
@@ -408,8 +401,6 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                         }
                     }
                 }
-
-            else -> return game
         }
 
         return game.copy(field = field, score = score)
@@ -460,8 +451,6 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
                         }
                     }
                 }
-
-            else -> return false
         }
 
         return false

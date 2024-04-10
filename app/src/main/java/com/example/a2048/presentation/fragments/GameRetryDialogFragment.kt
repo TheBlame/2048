@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.a2048.R
-import com.example.a2048.databinding.DialogGameRetryBinding
+import com.example.a2048.databinding.GameRetryDialogBinding
 import com.example.a2048.util.IDialogListener
 
 class GameRetryDialogFragment : DialogFragment() {
     private lateinit var listener: IDialogListener
 
-    private var _binding: DialogGameRetryBinding? = null
-    private val binding: DialogGameRetryBinding
+    private var _binding: GameRetryDialogBinding? = null
+    private val binding: GameRetryDialogBinding
         get() = _binding ?: throw RuntimeException("DialogGameRetryBinding == null")
 
     override fun onCreateView(
@@ -22,7 +22,7 @@ class GameRetryDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogGameRetryBinding.inflate(inflater, container, false)
+        _binding = GameRetryDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         return binding.root

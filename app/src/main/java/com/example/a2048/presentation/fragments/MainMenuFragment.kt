@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.a2048.App2048
 import com.example.a2048.R
 import com.example.a2048.databinding.FragmentMainMenuBinding
 import com.example.a2048.domain.entity.GameMode
@@ -18,6 +19,7 @@ import com.example.a2048.domain.entity.GameMode.MODE5x8
 import com.example.a2048.domain.entity.GameMode.MODE6x6
 import com.example.a2048.domain.entity.GameMode.MODE6x9
 import com.example.a2048.domain.entity.GameMode.MODE8x8
+import com.example.a2048.util.Helpers.Companion.lazyViewModel
 import com.google.android.material.card.MaterialCardView
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,6 +39,14 @@ class MainMenuFragment : Fragment() {
 
     private lateinit var gameMode: GameMode
 
+    private val component by lazy {
+        (requireActivity().application as App2048).component
+    }
+
+    private val viewModel by lazyViewModel { savedStateHandle ->
+        component.mainMenuViewModel().create(savedStateHandle)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +58,7 @@ class MainMenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSquareMode()
+        viewModel.scoreList
         binding.groupSquareMode.referencedIds.forEach { id ->
             binding.root.findViewById<MaterialCardView>(id).setOnClickListener {
                 resetSquareGroupCheck()
@@ -86,6 +97,7 @@ class MainMenuFragment : Fragment() {
                         initSquareMode()
                         resetRectangleGroupCheck()
                     }
+
                     binding.mode2 -> {
                         initRectangleMode()
                         resetSquareGroupCheck()
@@ -99,6 +111,14 @@ class MainMenuFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+        binding.leaderboardButton.setOnClickListener {
+            showLeaderboardDialog()
+        }
+    }
+
+    private fun showLeaderboardDialog() {
+        val dialog = LeaderboardDialogFragment.newInstance(gameMode)
+        dialog.show(childFragmentManager, LeaderboardDialogFragment.TAG)
     }
 
     private fun initSquareMode() {

@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.a2048.R
-import com.example.a2048.databinding.DialogGameOverBinding
+import com.example.a2048.databinding.GameOverDialogBinding
 import com.example.a2048.util.IDialogListener
 
 class GameOverDialogFragment : DialogFragment() {
     private lateinit var listener: IDialogListener
 
-    private var _binding: DialogGameOverBinding? = null
-    private val binding: DialogGameOverBinding
+    private var _binding: GameOverDialogBinding? = null
+    private val binding: GameOverDialogBinding
         get() = _binding ?: throw RuntimeException("DialogGameOverBinding == null")
 
     override fun onCreateView(
@@ -22,7 +22,7 @@ class GameOverDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogGameOverBinding.inflate(inflater, container, false)
+        _binding = GameOverDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         return binding.root
