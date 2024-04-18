@@ -27,9 +27,9 @@
 
             <ImageView
                 android:id="@+id/icon"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_4x4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,9 +63,9 @@
 
             <ImageView
                 android:id="@+id/icon2"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_5x5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -98,9 +98,9 @@
 
             <ImageView
                 android:id="@+id/icon3"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_6x6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -133,9 +133,9 @@
 
             <ImageView
                 android:id="@+id/icon4"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_8x8"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -244,9 +244,9 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_3x5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -280,9 +280,9 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon2"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_4x6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -315,9 +315,9 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon3"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_5x8"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -350,9 +350,9 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon4"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:src="@drawable/gamefield_preview_6x9"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

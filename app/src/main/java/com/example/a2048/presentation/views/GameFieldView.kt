@@ -143,16 +143,18 @@ class GameFieldView(
         initPaints()
         if (isInEditMode) {
             val list = buildList {
-                repeat(6) {
-                    add(buildList { repeat(4) { add(0) } }.toMutableList())
+                repeat(9) {
+                    add(buildList { repeat(6) { add(0) } }.toMutableList())
                 }
             }.toMutableList()
-            list[0][0] = 2
-            list[1][1] = 32
-            list[2][2] = 512
-            list[3][3] = 1024
+            list[6][5] = 8
+            list[7][4] = 4
+            list[8][3] = 2
+            list[8][4] = 16
+            list[7][5] = 32
+            list[8][5] = 128
 
-            game = Game(GameMode.MODE4x4, list, 0)
+            game = Game(GameMode.MODE6x9, list, 0)
         }
     }
 
