@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class SwipeFieldToDirectionUseCase @Inject constructor(private val repository: GameRepository) {
 
-    operator fun invoke(game: Game, direction: Direction): Game {
+    suspend operator fun invoke(game: Game, direction: Direction): Game {
        return repository.swipeFieldToDirection(game, direction)
     }
 }

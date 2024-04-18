@@ -2,7 +2,9 @@ package com.example.a2048.domain.entity
 
 import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Game(
     val gameMode: GameMode,
     val field: List<List<Int>>,

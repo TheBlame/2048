@@ -1,6 +1,8 @@
 package com.example.a2048.data
 
+import androidx.datastore.core.DataStore
 import com.example.a2048.data.database.AppDatabase
+import com.example.a2048.data.datastore.SavedGames
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.domain.entity.GameScore
@@ -14,19 +16,24 @@ import com.example.a2048.util.Direction.TOP
 import com.example.a2048.util.Helpers.Companion.mapGameAndDateToScoreDbModel
 import com.example.a2048.util.Helpers.Companion.mapScoreDbModelToGameScore
 import com.example.a2048.util.Helpers.Companion.twoDimensionalListToMutableList
+import kotlinx.collections.immutable.mutate
+import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 
-class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : GameRepository {
+class GameRepositoryImpl @Inject constructor(
+    private val db: AppDatabase,
+    private val ds: DataStore<SavedGames>
+) : GameRepository {
 
     override suspend fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
         var game: Game
         val gameSetting = gameMode.getGameSetting()
 
         if (startingField != null) {
-            game = Game(gameMode,startingField, 0)
+            game = Game(gameMode, startingField, 0)
         } else {
             val list = buildList {
                 repeat(gameSetting.rows) {
@@ -38,15 +45,21 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
 
             game = Game(gameMode, list, topScore)
             repeat(2) { game = addNumberToField(game) }
-
         }
 
         val possibleMoves = checkPossibleMoves(game)
 
-        return game.copy(possibleDirections = possibleMoves)
+        with(game.copy(possibleDirections = possibleMoves)) {
+            saveGameToDataStore(this)
+            return this
+        }
     }
 
-    override fun swipeFieldToDirection(game: Game, direction: Direction, testMode: Boolean): Game {
+    override suspend fun continueGame(gameMode: GameMode): Game? {
+        return ds.data.first().games[gameMode]
+    }
+
+    override suspend fun swipeFieldToDirection(game: Game, direction: Direction, testMode: Boolean): Game {
         if (!game.possibleDirections.contains(direction)) return game
 
         var newGameState = moveFieldWithAddition(game, direction)
@@ -57,14 +70,19 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
 
         val possibleMoves = checkPossibleMoves(newGameState)
 
-        if (possibleMoves.isEmpty()) return newGameState.copy(
-            possibleDirections = possibleMoves,
-            gameOver = true
-        )
+        if (possibleMoves.isEmpty()) {
+            removeGameFromDataStore(game.gameMode)
 
-        return newGameState.copy(
-            possibleDirections = possibleMoves
-        )
+            return newGameState.copy(
+                possibleDirections = possibleMoves,
+                gameOver = true
+            )
+        }
+
+        with(newGameState.copy(possibleDirections = possibleMoves)) {
+            saveGameToDataStore(this)
+            return this
+        }
     }
 
     override suspend fun saveScore(game: Game) {
@@ -78,6 +96,26 @@ class GameRepositoryImpl @Inject constructor(private val db: AppDatabase) : Game
             db.dbDao().getScoresByMode(gameMode).iterator().forEachRemaining {
                 this.add(mapScoreDbModelToGameScore(it))
             }
+        }
+    }
+
+    private suspend fun saveGameToDataStore(game: Game) {
+        ds.updateData {savedGames ->
+            savedGames.copy(
+                games = savedGames.games.mutate {
+                    it[game.gameMode] = game
+                }
+            )
+        }
+    }
+
+    private suspend fun removeGameFromDataStore(gameMode: GameMode) {
+        ds.updateData { savedGames ->
+            savedGames.copy(
+                games = savedGames.games.mutate {
+                    it.remove(gameMode)
+                }
+            )
         }
     }
 

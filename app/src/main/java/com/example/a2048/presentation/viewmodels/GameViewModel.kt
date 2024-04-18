@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
+import com.example.a2048.domain.usecases.ContinueGameUseCase
 import com.example.a2048.domain.usecases.SaveScoreUseCase
 import com.example.a2048.domain.usecases.StartGameUseCase
 import com.example.a2048.domain.usecases.SwipeFieldToDirectionUseCase
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class GameViewModel @AssistedInject constructor(
     private val startGameUseCase: StartGameUseCase,
+    private val continueGameUseCase: ContinueGameUseCase,
     private val saveScoreUseCase: SaveScoreUseCase,
     private val swipeFieldToDirectionUseCase: SwipeFieldToDirectionUseCase,
     @Assisted private val gameMode: GameMode,
@@ -30,12 +32,14 @@ class GameViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            _state.value = startGameUseCase(gameMode)
+            _state.value = continueGameUseCase(gameMode) ?: startGameUseCase(gameMode)
         }
     }
 
-    val swipeField: ((Direction) -> Unit) = {
-        _state.value = swipeFieldToDirectionUseCase.invoke(_state.value, it)
+   fun swipeField(direction: Direction) {
+       viewModelScope.launch {
+           _state.value = swipeFieldToDirectionUseCase.invoke(_state.value, direction)
+       }
     }
 
     fun startNewGame() {
