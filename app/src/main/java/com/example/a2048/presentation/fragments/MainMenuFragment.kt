@@ -64,10 +64,10 @@ class MainMenuFragment : Fragment() {
                 resetSquareGroupCheck()
                 binding.root.findViewById<MaterialCardView>(id).isChecked = true
                 gameMode = when (binding.root.findViewById<MaterialCardView>(id)) {
-                    binding.card1 -> MODE4x4
-                    binding.card2 -> MODE5x5
-                    binding.card3 -> MODE6x6
-                    binding.card4 -> MODE8x8
+                    binding.squareCard1 -> MODE4x4
+                    binding.squareCard2 -> MODE5x5
+                    binding.squareCard3 -> MODE6x6
+                    binding.squareCard4 -> MODE8x8
                     else -> throw Exception("Unknown card id")
                 }
             }
@@ -93,12 +93,12 @@ class MainMenuFragment : Fragment() {
                 }
                 binding.root.findViewById<MaterialCardView>(id).isChecked = true
                 when (binding.root.findViewById<MaterialCardView>(id)) {
-                    binding.mode1 -> {
+                    binding.squareMode -> {
                         initSquareMode()
                         resetRectangleGroupCheck()
                     }
 
-                    binding.mode2 -> {
+                    binding.rectangleMode -> {
                         initRectangleMode()
                         resetSquareGroupCheck()
                     }
@@ -124,8 +124,8 @@ class MainMenuFragment : Fragment() {
     private fun initSquareMode() {
         binding.groupSquareMode.visibility = VISIBLE
         binding.groupRectangleMode.visibility = GONE
-        binding.card1.isChecked = true
-        binding.mode1.isChecked = true
+        binding.squareCard1.isChecked = true
+        binding.squareMode.isChecked = true
         gameMode = MODE4x4
     }
 
@@ -133,7 +133,7 @@ class MainMenuFragment : Fragment() {
         binding.groupSquareMode.visibility = GONE
         binding.groupRectangleMode.visibility = VISIBLE
         binding.rectangleCard1.isChecked = true
-        binding.mode2.isChecked = true
+        binding.rectangleMode.isChecked = true
         gameMode = MODE3x5
     }
 

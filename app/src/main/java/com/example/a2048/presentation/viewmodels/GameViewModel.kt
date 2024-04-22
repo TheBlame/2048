@@ -10,6 +10,7 @@ import com.example.a2048.domain.usecases.SaveScoreUseCase
 import com.example.a2048.domain.usecases.StartGameUseCase
 import com.example.a2048.domain.usecases.SwipeFieldToDirectionUseCase
 import com.example.a2048.util.Direction
+import com.example.a2048.util.Helpers.Companion.buildEmptyField
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,7 +28,7 @@ class GameViewModel @AssistedInject constructor(
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(Game(gameMode, listOf(listOf()), 0))
+    private val _state = MutableStateFlow(Game(gameMode, buildEmptyField(gameMode), 0))
     val state = _state.asStateFlow()
 
     init {

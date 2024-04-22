@@ -8,7 +8,7 @@
     tools:context=".presentation.fragments.MainMenuFragment">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card1"
+        android:id="@+id/squareCard1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -18,7 +18,7 @@
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
-        app:layout_constraintEnd_toStartOf="@+id/card2"
+        app:layout_constraintEnd_toStartOf="@+id/squareCard2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/transparent">
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon"
+                android:id="@+id/squareIcon1"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_4x4"
@@ -38,15 +38,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4x4"
+                android:text="@string/_4x4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/icon" />
+                app:layout_constraintTop_toBottomOf="@id/squareIcon1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card2"
+        android:id="@+id/squareCard2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -56,8 +56,8 @@
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/card1"
-        app:layout_constraintTop_toTopOf="@id/card1"
+        app:layout_constraintStart_toEndOf="@id/squareCard1"
+        app:layout_constraintTop_toTopOf="@id/squareCard1"
         app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon2"
+                android:id="@+id/squareIcon2"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_5x5"
@@ -75,15 +75,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5x5"
+                android:text="@string/_5x5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/icon2" />
+                app:layout_constraintTop_toBottomOf="@id/squareIcon2" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card3"
+        android:id="@+id/squareCard3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -93,8 +93,8 @@
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
-        app:layout_constraintStart_toStartOf="@id/card1"
-        app:layout_constraintTop_toBottomOf="@id/card1"
+        app:layout_constraintStart_toStartOf="@id/squareCard1"
+        app:layout_constraintTop_toBottomOf="@id/squareCard1"
         app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,7 +102,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon3"
+                android:id="@+id/squareIcon3"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_6x6"
@@ -112,15 +112,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="6x6"
+                android:text="@string/_6x6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/icon3" />
+                app:layout_constraintTop_toBottomOf="@id/squareIcon3" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card4"
+        android:id="@+id/squareCard4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -129,9 +129,9 @@
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
-        app:layout_constraintEnd_toEndOf="@id/card2"
-        app:layout_constraintTop_toBottomOf="@id/card2"
-        app:layout_constraintTop_toTopOf="@id/card3"
+        app:layout_constraintEnd_toEndOf="@id/squareCard2"
+        app:layout_constraintTop_toBottomOf="@id/squareCard2"
+        app:layout_constraintTop_toTopOf="@id/squareCard3"
         app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/icon4"
+                android:id="@+id/squareIcon4"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_8x8"
@@ -149,10 +149,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="8x8"
+                android:text="@string/_8x8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/icon4" />
+                app:layout_constraintTop_toBottomOf="@id/squareIcon4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -160,10 +160,10 @@
         android:id="@+id/groupSquareMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="card1,card2, card3, card4" />
+        app:constraint_referenced_ids="squareCard1,squareCard2, squareCard3, squareCard4" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mode1"
+        android:id="@+id/squareMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -173,7 +173,7 @@
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
-        app:layout_constraintEnd_toStartOf="@id/mode2"
+        app:layout_constraintEnd_toStartOf="@id/rectangleMode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier">
 
@@ -196,7 +196,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mode2"
+        android:id="@+id/rectangleMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -207,7 +207,7 @@
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/mode1"
+        app:layout_constraintStart_toEndOf="@id/squareMode"
         app:layout_constraintTop_toBottomOf="@id/barrier">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -231,7 +231,7 @@
         android:id="@+id/groupModeSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="mode1,mode2" />
+        app:constraint_referenced_ids="squareMode,rectangleMode" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard1"
@@ -264,7 +264,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3x5"
+                android:text="@string/_3x5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rectangleIcon" />
@@ -301,7 +301,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4x6"
+                android:text="@string/_4x6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rectangleIcon2" />
@@ -338,7 +338,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5x8"
+                android:text="@string/_5x8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rectangleIcon3" />
@@ -375,7 +375,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="6x9"
+                android:text="@string/_6x9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rectangleIcon4" />
@@ -407,7 +407,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mode1" />
+        app:layout_constraintTop_toBottomOf="@id/squareMode" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/leaderboardButton"
@@ -432,6 +432,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="card3, rectangleCard3, card4, rectangleCard4" />
+        app:constraint_referenced_ids="squareCard3, rectangleCard3, squareCard4, rectangleCard4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

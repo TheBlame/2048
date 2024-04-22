@@ -73,7 +73,7 @@ class LeaderboardDialogFragment : DialogFragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 gameMode?.let { viewModel.getScoreList(it) }
-                binding.modeName.text = gameMode?.modeName()
+                binding.modeName.text = context?.let { gameMode?.modeName(it) }
                 binding.scoreList.adapter = adapter
                 binding.scoreList.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
                 viewModel.scoreList.collectLatest {

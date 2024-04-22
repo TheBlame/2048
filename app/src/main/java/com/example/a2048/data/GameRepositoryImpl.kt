@@ -13,6 +13,7 @@ import com.example.a2048.util.Direction.BOTTOM
 import com.example.a2048.util.Direction.LEFT
 import com.example.a2048.util.Direction.RIGHT
 import com.example.a2048.util.Direction.TOP
+import com.example.a2048.util.Helpers.Companion.buildEmptyField
 import com.example.a2048.util.Helpers.Companion.mapGameAndDateToScoreDbModel
 import com.example.a2048.util.Helpers.Companion.mapScoreDbModelToGameScore
 import com.example.a2048.util.Helpers.Companion.twoDimensionalListToMutableList
@@ -30,16 +31,11 @@ class GameRepositoryImpl @Inject constructor(
 
     override suspend fun startGame(gameMode: GameMode, startingField: List<List<Int>>?): Game {
         var game: Game
-        val gameSetting = gameMode.getGameSetting()
 
         if (startingField != null) {
             game = Game(gameMode, startingField, 0)
         } else {
-            val list = buildList {
-                repeat(gameSetting.rows) {
-                    add(buildList { repeat(gameSetting.columns) { add(0) } })
-                }
-            }
+            val list = buildEmptyField(gameMode)
 
             val topScore = db.dbDao().getTopScoreByMode(gameMode) ?: 0
 

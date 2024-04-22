@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="retry">Начать новую игру?</string>
+    <string name="gameOver">Конец игры</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="score">ОЧКИ</string>
+    <string name="record">РЕКОРД</string>
+</resources>

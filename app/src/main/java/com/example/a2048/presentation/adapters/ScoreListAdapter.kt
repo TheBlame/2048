@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.a2048.R
 import com.example.a2048.databinding.ScoreItemBinding
 import com.example.a2048.domain.entity.GameScore
 
@@ -31,7 +32,8 @@ class ScoreListAdapter :
 
     override fun onBindViewHolder(holder: ScoreListViewHolder, position: Int) {
         val score = getItem(position)
-        holder.binding.itemNumber.text = "${position + 1}."
+        val count = position + 1
+        holder.binding.itemNumber.text = holder.itemView.context.getString(R.string.scoreCount, count)
         holder.binding.itemDate.text = score.date
         holder.binding.itemScore.text = score.value.toString()
     }
