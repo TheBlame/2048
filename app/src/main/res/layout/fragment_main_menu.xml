@@ -11,6 +11,7 @@
         android:id="@+id/card1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
@@ -19,7 +20,8 @@
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/card2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -55,7 +57,8 @@
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/card1"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@id/card1"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -83,6 +86,7 @@
         android:id="@+id/card3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
@@ -90,7 +94,8 @@
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintStart_toStartOf="@id/card1"
-        app:layout_constraintTop_toBottomOf="@id/card1">
+        app:layout_constraintTop_toBottomOf="@id/card1"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -125,7 +130,9 @@
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="@id/card2"
-        app:layout_constraintTop_toBottomOf="@id/card2">
+        app:layout_constraintTop_toBottomOf="@id/card2"
+        app:layout_constraintTop_toTopOf="@id/card3"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -159,6 +166,7 @@
         android:id="@+id/mode1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
@@ -174,11 +182,11 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:src="@drawable/square_mode"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -191,6 +199,7 @@
         android:id="@+id/mode2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
@@ -206,11 +215,11 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/round_grid_4x4_24"
+                android:src="@drawable/rectangle_mode"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -228,9 +237,11 @@
         android:id="@+id/rectangleCard1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:strokeColor="@color/transparent"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
+        android:layout_marginTop="32dp"
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
@@ -244,7 +255,7 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_3x5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -262,6 +273,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard2"
+        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -272,7 +284,7 @@
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/rectangleCard1"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@id/rectangleCard1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -280,7 +292,7 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon2"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_4x6"
                 app:layout_constraintStart_toStartOf="parent"
@@ -298,11 +310,13 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard3"
+        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
+        android:layout_marginTop="8dp"
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
@@ -315,7 +329,7 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon3"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_5x8"
                 app:layout_constraintStart_toStartOf="parent"
@@ -333,6 +347,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard4"
+        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -342,7 +357,8 @@
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="@id/rectangleCard2"
-        app:layout_constraintTop_toBottomOf="@id/rectangleCard2">
+        app:layout_constraintTop_toBottomOf="@id/rectangleCard2"
+        app:layout_constraintTop_toTopOf="@id/rectangleCard3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -350,7 +366,7 @@
 
             <ImageView
                 android:id="@+id/rectangleIcon4"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="128dp"
                 android:src="@drawable/gamefield_preview_6x9"
                 app:layout_constraintStart_toStartOf="parent"
@@ -365,7 +381,6 @@
                 app:layout_constraintTop_toBottomOf="@id/rectangleIcon4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/groupRectangleMode"
@@ -391,7 +406,8 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mode1" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/leaderboardButton"
