@@ -7,29 +7,32 @@
 
     <TextView
         android:id="@+id/itemNumber"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:fontFamily="sans-serif-medium"
         android:textColor="@color/gray"
+        android:textSize="24sp"
         tools:text="1." />
 
     <TextView
         android:id="@+id/itemDate"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:fontFamily="sans-serif-medium"
         android:textColor="@color/gray"
+        android:textSize="20sp"
         tools:text="01.01.1970" />
 
     <TextView
         android:id="@+id/itemScore"
-        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:fontFamily="sans-serif-medium"
         android:textColor="@color/gray"
+        android:textSize="24sp"
         tools:text="2048" />
 
 </LinearLayout>

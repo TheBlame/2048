@@ -25,5 +25,11 @@
         <item name="cornerRadius">4dp</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenBackground">@color/cellValue2048</item>
+        <item name="postSplashScreenTheme">@style/Theme._2048</item>
+    </style>
+
     <style name="GlobalGameFieldStyle" parent="DefaultGameFieldStyle" />
 </resources>

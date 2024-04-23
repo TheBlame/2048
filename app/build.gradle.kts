@@ -49,6 +49,8 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     implementation("androidx.datastore:datastore:1.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")

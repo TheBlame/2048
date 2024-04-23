@@ -8,8 +8,7 @@ import com.example.a2048.data.database.dbmodels.ScoreDbModel
 
 @Database(
     entities = [ScoreDbModel::class],
-    version = 1,
-    exportSchema = false
+    version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
 
