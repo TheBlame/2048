@@ -9,8 +9,8 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -23,13 +23,8 @@ import com.example.a2048.domain.entity.Game
 import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.util.CellCoordinates
 import com.example.a2048.util.Direction
-import com.example.a2048.util.Direction.BOTTOM
-import com.example.a2048.util.Direction.LEFT
-import com.example.a2048.util.Direction.RIGHT
-import com.example.a2048.util.Direction.TOP
 import com.example.a2048.util.Helpers.Companion.color
 import kotlin.math.PI
-import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
@@ -65,6 +60,8 @@ class GameFieldView(
 
     private val changedCells = mutableSetOf<CellCoordinates>()
 
+    private val gestureDetector = GestureDetector(context, MyGestureListener())
+
     private var swipeListener: ((Direction) -> Unit)? = null
 
     fun setSwipeListener(o: ((Direction) -> Unit)?) {
@@ -87,11 +84,6 @@ class GameFieldView(
     private var textLength = 0f
     private var textHeight = 0
     private var textSize = 0f
-
-    private var touchStartX = 0f
-    private var touchStartY = 0f
-    private var touchEndX = 0f
-    private var touchEndY = 0f
 
     private lateinit var fieldPaint: Paint
     private lateinit var cell2Paint: Paint
@@ -297,30 +289,7 @@ class GameFieldView(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                touchStartX = event.x
-                touchStartY = event.y
-                return true
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                touchEndX = event.x
-                touchEndY = event.y
-                Log.d("touch", "start x: $touchStartX, currentX: $touchEndX")
-                Log.d("touch", "start y: $touchStartY, currentY: $touchEndY")
-            }
-
-            MotionEvent.ACTION_UP -> {
-                val angle = getAngle(touchStartX, touchStartY, touchEndX, touchEndY)
-                val direction = Direction[angle]
-                val movement =
-                    parseMovement(touchStartX, touchStartY, touchEndX, touchEndY, direction)
-                if (movement >= cellSize) swipeListener?.invoke(direction)
-                return true
-            }
-        }
-        return false
+        return gestureDetector.onTouchEvent(event)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -542,21 +511,6 @@ class GameFieldView(
         return ((180f / PI.toFloat() * radian) + 360) % 360
     }
 
-    private fun parseMovement(
-        startX: Float,
-        startY: Float,
-        endX: Float,
-        endY: Float,
-        direction: Direction
-    ): Float {
-        return when (direction) {
-            TOP -> (endY - startY).absoluteValue
-            BOTTOM -> (startY - endY).absoluteValue
-            LEFT -> (endX - startX).absoluteValue
-            RIGHT -> (startX - endX).absoluteValue
-        }
-    }
-
     private fun startAnimation() {
         textAnimator = ValueAnimator.ofFloat(0f, textSize * 0.7f).apply {
             duration = animationDuration.toLong()
@@ -608,6 +562,26 @@ class GameFieldView(
     ) {
         drawPath(path, pathPaint)
         drawText(text, textX, textY, textPaint)
+    }
+
+    inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onDown(e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (e1 != null) {
+                val angle = getAngle(e1.x, e1.y, e2.x, e2.y)
+                val direction = Direction[angle]
+                swipeListener?.invoke(direction)
+            }
+            return true
+        }
     }
 
     companion object {
