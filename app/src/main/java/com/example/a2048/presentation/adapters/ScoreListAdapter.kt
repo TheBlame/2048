@@ -33,7 +33,7 @@ class ScoreListAdapter :
     override fun onBindViewHolder(holder: ScoreListViewHolder, position: Int) {
         val score = getItem(position)
         val count = position + 1
-        holder.binding.itemNumber.text = holder.itemView.context.getString(R.string.scoreCount, count)
+        holder.binding.itemNumber.text = holder.itemView.context.getString(R.string.score_count, count)
         holder.binding.itemDate.text = score.date
         holder.binding.itemScore.text = score.value.toString()
     }

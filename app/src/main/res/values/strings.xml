@@ -9,10 +9,14 @@
     <string name="_5x8" translatable="false">5x8</string>
     <string name="_6x9" translatable="false">6x9</string>
     <string name="retry">Start new game?</string>
-    <string name="gameOver">Game over</string>
+    <string name="game_over">Game over</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="scoreCount" translatable="false">%1$d.</string>
+    <string name="score_count" translatable="false">%1$d.</string>
     <string name="score">SCORE</string>
     <string name="record">RECORD</string>
+    <string name="no_games_played">No games played</string>
+    <string name="count_label" translatable="false">№</string>
+    <string name="date">Date</string>
+    <string name="score_upr_lwr_case">Score</string>
 </resources>

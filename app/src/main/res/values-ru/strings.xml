@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">Начать новую игру?</string>
-    <string name="gameOver">Конец игры</string>
+    <string name="game_over">Конец игры</string>
     <string name="no">Нет</string>
     <string name="yes">Да</string>
     <string name="score">ОЧКИ</string>
     <string name="record">РЕКОРД</string>
+    <string name="no_games_played">Нет сыгранных игр</string>
+    <string name="date">Дата</string>
+    <string name="score_upr_lwr_case">Очки</string>
 </resources>

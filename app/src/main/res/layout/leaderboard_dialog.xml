@@ -18,10 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@color/gray"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,29 +32,71 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Нет сыгранных игр"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/no_games_played"
             android:textColor="@color/gray"
-            android:fontFamily="sans-serif-medium"
             android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/modeName"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/modeName" />
 
+        <TextView
+            android:id="@+id/scoreCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/count_label"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/modeName" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <TextView
+            android:id="@+id/scoreDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/date"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/modeName"
+            app:layout_constraintStart_toStartOf="@id/modeName"
+            app:layout_constraintTop_toBottomOf="@id/modeName" />
+
+        <TextView
+            android:id="@+id/scoreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/score_upr_lwr_case"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/modeName" />
+
+        <androidx.constraintlayout.widget.Group
             android:id="@+id/scoreList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:constraint_referenced_ids="scoreCount, scoreDate, scoreLabel, scoreListRecycler" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scoreListRecycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/modeName"
+            app:layout_constraintTop_toBottomOf="@id/scoreDate"
             tools:listitem="@layout/score_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </com.google.android.material.card.MaterialCardView>

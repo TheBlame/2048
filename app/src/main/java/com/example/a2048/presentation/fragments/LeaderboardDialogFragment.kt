@@ -3,6 +3,7 @@ package com.example.a2048.presentation.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
@@ -74,10 +75,11 @@ class LeaderboardDialogFragment : DialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 gameMode?.let { viewModel.getScoreList(it) }
                 binding.modeName.text = context?.let { gameMode?.modeName(it) }
-                binding.scoreList.adapter = adapter
-                binding.scoreList.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
+                binding.scoreListRecycler.adapter = adapter
+                binding.scoreListRecycler.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
                 viewModel.scoreList.collectLatest {
                     if (it.isEmpty()) {
+                        binding.scoreList.visibility = GONE
                         binding.noRecord.visibility = VISIBLE
                     } else {
                         adapter.submitList(it)
