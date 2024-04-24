@@ -7,7 +7,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,18 +18,12 @@ import com.example.a2048.databinding.LeaderboardDialogBinding
 import com.example.a2048.domain.entity.GameMode
 import com.example.a2048.presentation.adapters.ScoreListAdapter
 import com.example.a2048.presentation.viewmodels.MainMenuViewModel
+import com.example.a2048.util.Helpers.Companion.parcelable
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LeaderboardDialogFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LeaderboardDialogFragment : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var gameMode: GameMode? = null
@@ -50,7 +43,7 @@ class LeaderboardDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            gameMode = it.getParcelable(ARG_PARAM1)
+            gameMode = it.parcelable(ARG_PARAM1)
         }
     }
 

@@ -1,6 +1,9 @@
 package com.example.a2048.util
 
 import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import android.os.Bundle
+import android.os.Parcelable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -30,6 +33,11 @@ class Helpers {
             noinline create: (savedStateHandle: SavedStateHandle) -> T
         ) = viewModels<T> {
             Factory(this, create)
+        }
+
+        inline fun <reified T : Parcelable> Bundle.parcelable(key: String) = when {
+            SDK_INT >= 33 -> getParcelable(key, T::class.java)
+            else -> @Suppress("DEPRECATION") getParcelable(key) as? T
         }
 
         fun buildEmptyField(gameMode: GameMode) = buildList {
