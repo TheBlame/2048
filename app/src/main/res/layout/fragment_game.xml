@@ -5,7 +5,7 @@
     android:id="@+id/game_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
+    android:background="@color/app_background"
     tools:context=".presentation.fragments.GameFragment">
 
     <com.google.android.material.button.MaterialButton
@@ -103,9 +103,9 @@
         android:layout_marginEnd="8dp"
         app:cardBackgroundColor="@color/field"
         app:cardCornerRadius="4dp"
-        app:layout_constraintTop_toTopOf="@id/scoreCard"
-        app:layout_constraintEnd_toStartOf="@id/scoreCard"
         app:layout_constraintBottom_toBottomOf="@id/scoreCard"
+        app:layout_constraintEnd_toStartOf="@id/scoreCard"
+        app:layout_constraintTop_toTopOf="@id/scoreCard"
         app:strokeColor="@color/field">
 
         <androidx.constraintlayout.widget.ConstraintLayout

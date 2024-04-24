@@ -97,6 +97,11 @@ class GameFieldView(
     private lateinit var cell512Paint: Paint
     private lateinit var cell1024Paint: Paint
     private lateinit var cell2048Paint: Paint
+    private lateinit var cell4096Paint: Paint
+    private lateinit var cell8192Paint: Paint
+    private lateinit var cell16384Paint: Paint
+    private lateinit var cell32768Paint: Paint
+    private lateinit var cell65536Paint: Paint
     private lateinit var cellBigNumberPaint: Paint
     private lateinit var cellEmptyPaint: Paint
     private lateinit var lightBackgroundTextPaint: Paint
@@ -145,6 +150,11 @@ class GameFieldView(
             list[8][4] = 16
             list[7][5] = 32
             list[8][5] = 128
+            list[8][2] = 4096
+            list[7][2] = 8192
+            list[6][2] = 16384
+            list[5][2] = 32768
+            list[4][2] = 65536
 
             game = Game(GameMode.MODE6x9, list, 0)
         }
@@ -163,7 +173,7 @@ class GameFieldView(
         )
         cellEmptyColor = typedArray.getColor(
             R.styleable.GameFieldView_emptyCellColor,
-            context.color(R.color.cellEmpty)
+            context.color(R.color.cell_empty)
         )
         fieldColor =
             typedArray.getColor(R.styleable.GameFieldView_gridColor, context.color(R.color.field))
@@ -177,7 +187,7 @@ class GameFieldView(
     }
 
     private fun initDefaultAttr() {
-        cellEmptyColor = context.color(R.color.cellEmpty)
+        cellEmptyColor = context.color(R.color.cell_empty)
         fieldColor = context.color(R.color.field)
         cornerRadius = DEFAULT_FIELD_CORNER
         animationDuration = DEFAULT_ANIMATION_DURATION
@@ -189,48 +199,68 @@ class GameFieldView(
         fieldPaint.style = Paint.Style.FILL
 
         cell2Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell2Paint.color = context.color(R.color.cellValue2)
+        cell2Paint.color = context.color(R.color.cell_value_2)
         cell2Paint.style = Paint.Style.FILL
 
         cell4Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell4Paint.color = context.color(R.color.cellValue4)
+        cell4Paint.color = context.color(R.color.cell_value_4)
         cell4Paint.style = Paint.Style.FILL
 
         cell8Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell8Paint.color = context.color(R.color.cellValue8)
+        cell8Paint.color = context.color(R.color.cell_value_8)
         cell8Paint.style = Paint.Style.FILL
 
         cell16Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell16Paint.color = context.color(R.color.cellValue16)
+        cell16Paint.color = context.color(R.color.cell_value_16)
         cell16Paint.style = Paint.Style.FILL
 
         cell32Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell32Paint.color = context.color(R.color.cellValue32)
+        cell32Paint.color = context.color(R.color.cell_value_32)
         cell32Paint.style = Paint.Style.FILL
 
         cell64Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell64Paint.color = context.color(R.color.cellValue64)
+        cell64Paint.color = context.color(R.color.cell_value_64)
         cell64Paint.style = Paint.Style.FILL
 
         cell128Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell128Paint.color = context.color(R.color.cellValue128)
+        cell128Paint.color = context.color(R.color.cell_value_128)
         cell128Paint.style = Paint.Style.FILL
 
         cell256Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell256Paint.color = context.color(R.color.cellValue256)
+        cell256Paint.color = context.color(R.color.cell_value_256)
         cell256Paint.style = Paint.Style.FILL
 
         cell512Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell512Paint.color = context.color(R.color.cellValue512)
+        cell512Paint.color = context.color(R.color.cell_value_512)
         cell512Paint.style = Paint.Style.FILL
 
         cell1024Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell1024Paint.color = context.color(R.color.cellValue1024)
+        cell1024Paint.color = context.color(R.color.cell_value_1024)
         cell1024Paint.style = Paint.Style.FILL
 
         cell2048Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        cell2048Paint.color = context.color(R.color.cellValue2048)
+        cell2048Paint.color = context.color(R.color.cell_value_2048)
         cell2048Paint.style = Paint.Style.FILL
+
+        cell4096Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cell4096Paint.color = context.color(R.color.cell_value_4096)
+        cell4096Paint.style = Paint.Style.FILL
+
+        cell8192Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cell8192Paint.color = context.color(R.color.cell_value_8192)
+        cell8192Paint.style = Paint.Style.FILL
+
+        cell16384Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cell16384Paint.color = context.color(R.color.cell_value_16384)
+        cell16384Paint.style = Paint.Style.FILL
+
+        cell32768Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cell32768Paint.color = context.color(R.color.cell_value_32768)
+        cell32768Paint.style = Paint.Style.FILL
+
+        cell65536Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        cell65536Paint.color = context.color(R.color.cell_value_65536)
+        cell65536Paint.style = Paint.Style.FILL
 
         cellBigNumberPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         cellBigNumberPaint.color = Color.BLACK
@@ -460,6 +490,51 @@ class GameFieldView(
             2048 -> canvas.drawPathWithText(
                 cellPath,
                 cell2048Paint,
+                cellValue.toString(),
+                textX,
+                textY,
+                darkBackgroundTextPaint
+            )
+
+            4096 -> canvas.drawPathWithText(
+                cellPath,
+                cell4096Paint,
+                cellValue.toString(),
+                textX,
+                textY,
+                darkBackgroundTextPaint
+            )
+
+            8192 -> canvas.drawPathWithText(
+                cellPath,
+                cell8192Paint,
+                cellValue.toString(),
+                textX,
+                textY,
+                darkBackgroundTextPaint
+            )
+
+            16384 -> canvas.drawPathWithText(
+                cellPath,
+                cell16384Paint,
+                cellValue.toString(),
+                textX,
+                textY,
+                darkBackgroundTextPaint
+            )
+
+            32768 -> canvas.drawPathWithText(
+                cellPath,
+                cell32768Paint,
+                cellValue.toString(),
+                textX,
+                textY,
+                darkBackgroundTextPaint
+            )
+
+            65536 -> canvas.drawPathWithText(
+                cellPath,
+                cell65536Paint,
                 cellValue.toString(),
                 textX,
                 textY,

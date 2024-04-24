@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
+    android:background="@color/app_background"
     tools:context=".presentation.fragments.MainMenuFragment">
 
     <com.google.android.material.card.MaterialCardView
@@ -237,17 +237,17 @@
         android:id="@+id/rectangleCard1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:strokeColor="@color/transparent"
+        android:layout_marginTop="32dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
-        android:layout_marginTop="32dp"
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/rectangleCard2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -273,7 +273,6 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard2"
-        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -284,7 +283,8 @@
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/rectangleCard1"
-        app:layout_constraintTop_toTopOf="@id/rectangleCard1">
+        app:layout_constraintTop_toTopOf="@id/rectangleCard1"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -310,18 +310,18 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard3"
-        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:checkable="true"
         android:clickable="true"
         android:focusable="true"
-        android:layout_marginTop="8dp"
         app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:checkedIconTint="@color/transparent"
         app:layout_constraintStart_toStartOf="@id/rectangleCard1"
-        app:layout_constraintTop_toBottomOf="@id/rectangleCard1">
+        app:layout_constraintTop_toBottomOf="@id/rectangleCard1"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -347,7 +347,6 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rectangleCard4"
-        app:strokeColor="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checkable="true"
@@ -358,7 +357,8 @@
         app:checkedIconTint="@color/transparent"
         app:layout_constraintEnd_toEndOf="@id/rectangleCard2"
         app:layout_constraintTop_toBottomOf="@id/rectangleCard2"
-        app:layout_constraintTop_toTopOf="@id/rectangleCard3">
+        app:layout_constraintTop_toTopOf="@id/rectangleCard3"
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"

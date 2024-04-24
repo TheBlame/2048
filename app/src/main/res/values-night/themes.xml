@@ -11,7 +11,7 @@
 
     <style name="DefaultGameFieldStyle">
         <item name="gridColor">@color/field</item>
-        <item name="emptyCellColor">@color/cellEmpty</item>
+        <item name="emptyCellColor">@color/cell_empty</item>
         <item name="cornerRadius">0dp</item>
         <item name="animationDuration">0</item>
     </style>
@@ -23,6 +23,12 @@
     <style name="AppMarginsCorners">
         <item name="android:layout_margin">16dp</item>
         <item name="cornerRadius">4dp</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenBackground">@color/cell_value_2048</item>
+        <item name="postSplashScreenTheme">@style/Theme._2048</item>
     </style>
 
     <style name="GlobalGameFieldStyle" parent="DefaultGameFieldStyle" />
