@@ -81,6 +81,11 @@ class GameFragment : Fragment(), IDialogListener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun showDialog(dialogType: DialogType) {
         val dialog = when (dialogType) {
             RESTART_GAME -> GameRetryDialogFragment()

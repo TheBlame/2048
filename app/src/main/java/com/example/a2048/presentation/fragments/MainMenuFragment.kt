@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import com.example.a2048.App2048
 import com.example.a2048.R
@@ -106,25 +107,40 @@ class MainMenuFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun showLeaderboardDialog() {
         val dialog = LeaderboardDialogFragment.newInstance(gameMode)
         dialog.show(childFragmentManager, LeaderboardDialogFragment.TAG)
     }
 
     private fun initSquareMode() {
-        binding.groupSquareMode.visibility = VISIBLE
-        binding.groupRectangleMode.visibility = GONE
-        binding.squareCard1.isChecked = true
-        binding.squareMode.isChecked = true
-        gameMode = MODE4x4
+        if (!checkGroupForAnyChecked(binding.groupSquareMode)) {
+            binding.groupSquareMode.visibility = VISIBLE
+            binding.groupRectangleMode.visibility = GONE
+            binding.squareCard1.isChecked = true
+            binding.squareMode.isChecked = true
+            gameMode = MODE4x4
+        }
     }
 
     private fun initRectangleMode() {
-        binding.groupSquareMode.visibility = GONE
-        binding.groupRectangleMode.visibility = VISIBLE
-        binding.rectangleCard1.isChecked = true
-        binding.rectangleMode.isChecked = true
-        gameMode = MODE3x5
+        if (!checkGroupForAnyChecked(binding.groupRectangleMode)) {
+            binding.groupSquareMode.visibility = GONE
+            binding.groupRectangleMode.visibility = VISIBLE
+            binding.rectangleCard1.isChecked = true
+            binding.rectangleMode.isChecked = true
+            gameMode = MODE3x5
+        }
+    }
+
+    private fun checkGroupForAnyChecked(group: Group): Boolean {
+        return group.referencedIds.any {
+            binding.root.findViewById<MaterialCardView>(it).isChecked
+        }
     }
 
     private fun resetSquareGroupCheck() {

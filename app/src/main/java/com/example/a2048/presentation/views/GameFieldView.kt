@@ -60,7 +60,25 @@ class GameFieldView(
 
     private val changedCells = mutableSetOf<CellCoordinates>()
 
-    private val gestureDetector = GestureDetector(context, MyGestureListener())
+    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDown(e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (e1 != null) {
+                val angle = getAngle(e1.x, e1.y, e2.x, e2.y)
+                val direction = Direction[angle]
+                swipeListener?.invoke(direction)
+            }
+            return true
+        }
+    })
 
     private var swipeListener: ((Direction) -> Unit)? = null
 
@@ -637,26 +655,6 @@ class GameFieldView(
     ) {
         drawPath(path, pathPaint)
         drawText(text, textX, textY, textPaint)
-    }
-
-    inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent): Boolean {
-            return true
-        }
-
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            if (e1 != null) {
-                val angle = getAngle(e1.x, e1.y, e2.x, e2.y)
-                val direction = Direction[angle]
-                swipeListener?.invoke(direction)
-            }
-            return true
-        }
     }
 
     companion object {
